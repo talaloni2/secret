@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "644166729886",
+    "project_id": "android-course-secret",
+    "storage_bucket": "android-course-secret.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:644166729886:android:ef4f7ff62fd46cd6753b8f",
+        "android_client_info": {
+          "package_name": "com.example.secret"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "644166729886-e5j2prrv1hi3gjli9tq888sbc2k4o1j2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzxRP3MuuYzOvgYsbMRajUiYIYJw5nbi4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "644166729886-e5j2prrv1hi3gjli9tq888sbc2k4o1j2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
