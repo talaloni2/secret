@@ -75,12 +75,11 @@ public class SignUpFragment extends Fragment {
     }
 
     private void performRegister(View view) {
+        binding.cancelBtn.setClickable(false);
+        binding.registerBtn.setClickable(false);
         binding.registerProgressBar.setVisibility(View.VISIBLE);
-        binding.registerProgressBar.requestFocus();
-        String email = binding.emailEt.getText().toString();
+        User user = composeUser();
         String password = binding.passwordEt.getText().toString();
-        String nickname = binding.nicknameEt.getText().toString();
-        User user = new User("", nickname, null, email);
         Optional<String> validationError = validateUser(user, password);
         if(validationError.isPresent()){
             Toast.makeText(getActivity(), validationError.get(), Toast.LENGTH_SHORT).show();
@@ -98,6 +97,10 @@ public class SignUpFragment extends Fragment {
             Toast.makeText(getActivity(), "Register failed", Toast.LENGTH_SHORT).show();
         };
 
+        performRegisterWithAvatar(user, password, createUserSuccessListener, createUserFailListener);
+    }
+
+    private void performRegisterWithAvatar(User user, String password, Listener<Void> createUserSuccessListener, Listener<Void> createUserFailListener) {
         if (isAvatarSelected) {
             Bitmap bitmap = ((BitmapDrawable) binding.avatarImg.getDrawable()).getBitmap();
             UsersModel.instance().uploadImage(UUID.randomUUID().toString(), bitmap, url -> {
@@ -110,6 +113,14 @@ public class SignUpFragment extends Fragment {
         } else {
             UsersModel.instance().registerUser(user, password, createUserSuccessListener, createUserFailListener);
         }
+    }
+
+    @NonNull
+    private User composeUser() {
+        String email = binding.emailEt.getText().toString();
+        String nickname = binding.nicknameEt.getText().toString();
+        User user = new User("", nickname, null, email);
+        return user;
     }
 
     private Optional<String> validateUser(User user, String password){
