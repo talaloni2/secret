@@ -11,8 +11,10 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.example.secret.databinding.FragmentSignUpBinding;
 import com.example.secret.interfaces.Listener;
@@ -53,6 +55,7 @@ public class SignUpFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentSignUpBinding.inflate(inflater, container, false);
+        binding.registerProgressBar.setVisibility(View.INVISIBLE);
 
         binding.registerBtn.setOnClickListener(this::performRegister);
 
@@ -65,18 +68,18 @@ public class SignUpFragment extends Fragment {
         });
 
         binding.cancelBtn.setOnClickListener(view -> {
-            getActivity().finish();
-            System.exit(0);
+            Navigation.findNavController(view).popBackStack();
         });
 
         return binding.getRoot();
     }
 
     private void performRegister(View view) {
-        String email = binding.emailEt.getText().toString();
+        binding.cancelBtn.setClickable(false);
+        binding.registerBtn.setClickable(false);
+        binding.registerProgressBar.setVisibility(View.VISIBLE);
+        User user = composeUser();
         String password = binding.passwordEt.getText().toString();
-        String nickname = binding.nicknameEt.getText().toString();
-        User user = new User("", nickname, null, email);
         Optional<String> validationError = validateUser(user, password);
         if(validationError.isPresent()){
             Toast.makeText(getActivity(), validationError.get(), Toast.LENGTH_SHORT).show();
@@ -85,11 +88,19 @@ public class SignUpFragment extends Fragment {
 
         Listener<Void> createUserSuccessListener = unused -> {
             Toast.makeText(getActivity(), "Registered successfully", Toast.LENGTH_SHORT).show();
+            binding.registerProgressBar.setVisibility(View.INVISIBLE);
             navigateToFeed(view);
         };
 
-        Listener<Void> createUserFailListener = unused -> Toast.makeText(getActivity(), "Register failed", Toast.LENGTH_SHORT).show();
+        Listener<Void> createUserFailListener = unused -> {
+            binding.registerProgressBar.setVisibility(View.INVISIBLE);
+            Toast.makeText(getActivity(), "Register failed", Toast.LENGTH_SHORT).show();
+        };
 
+        performRegisterWithAvatar(user, password, createUserSuccessListener, createUserFailListener);
+    }
+
+    private void performRegisterWithAvatar(User user, String password, Listener<Void> createUserSuccessListener, Listener<Void> createUserFailListener) {
         if (isAvatarSelected) {
             Bitmap bitmap = ((BitmapDrawable) binding.avatarImg.getDrawable()).getBitmap();
             UsersModel.instance().uploadImage(UUID.randomUUID().toString(), bitmap, url -> {
@@ -102,7 +113,14 @@ public class SignUpFragment extends Fragment {
         } else {
             UsersModel.instance().registerUser(user, password, createUserSuccessListener, createUserFailListener);
         }
+    }
 
+    @NonNull
+    private User composeUser() {
+        String email = binding.emailEt.getText().toString();
+        String nickname = binding.nicknameEt.getText().toString();
+        User user = new User("", nickname, null, email);
+        return user;
     }
 
     private Optional<String> validateUser(User user, String password){
@@ -122,5 +140,6 @@ public class SignUpFragment extends Fragment {
     }
 
     private void navigateToFeed(View view) {
+        Navigation.findNavController(view).navigate(SignUpFragmentDirections.actionSignUpFragmentToUserProfileFragment());
     }
 }
