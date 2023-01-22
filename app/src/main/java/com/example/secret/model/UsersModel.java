@@ -43,5 +43,8 @@ public class UsersModel {
         firebaseModel.register(user, password, successListener, failedListener);
     }
 
+    public void signIn(String email, String password, Listener<Void> successListener, Listener<Void> failedListener) {
+        firebaseModel.signIn(email, password, successListener, failedListener);
+    }
 }
 

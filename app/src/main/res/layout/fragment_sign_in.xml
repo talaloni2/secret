@@ -19,34 +19,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <FrameLayout
+            <ImageView
+                android:id="@+id/avatarImg"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/avatarImg"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:layout_marginTop="8dp"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/avatar" />
-
-                <ImageButton
-                    android:id="@+id/galleryButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|left"
-                    android:layout_margin="10dp"
-                    android:src="@drawable/ic_baseline_image_search_24" />
-
-                <ImageButton
-                    android:id="@+id/cameraButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|right"
-                    android:layout_margin="10dp"
-                    android:src="@drawable/ic_baseline_photo_camera_24" />
-            </FrameLayout>
+                android:layout_height="250dp"
+                android:layout_marginTop="8dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/signinimage" />
 
 
             <com.google.android.material.textfield.TextInputLayout
@@ -83,27 +62,18 @@
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                app:startIconDrawable="@drawable/ic_baseline_badge_24">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/nicknameEt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Nickname" />
-            </com.google.android.material.textfield.TextInputLayout>
-
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
+                <Button
+                    android:id="@+id/signinBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1"
+                    android:text="SIGN IN" />
 
                 <Button
                     android:id="@+id/registerBtn"
@@ -111,16 +81,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     android:layout_weight="1"
-                    android:text="REGISTER" />
-
-
-                <Button
-                    android:id="@+id/cancelBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:layout_weight="1"
-                    android:text="CANCEL" />
+                    android:text="I'M NEW HERE" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
 

@@ -96,4 +96,14 @@ public class FirebaseModel {
     public FirebaseUser getCurrentUser() {
         return auth.getCurrentUser();
     }
+
+    public void signIn(String email, String password, Listener<Void> successListener, Listener<Void> failedListener) {
+        auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                successListener.onComplete(null);
+                return;
+            }
+            failedListener.onComplete(null);
+        });
+    }
 }

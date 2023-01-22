@@ -11,8 +11,10 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.example.secret.databinding.FragmentSignUpBinding;
 import com.example.secret.interfaces.Listener;
@@ -65,8 +67,7 @@ public class SignUpFragment extends Fragment {
         });
 
         binding.cancelBtn.setOnClickListener(view -> {
-            getActivity().finish();
-            System.exit(0);
+            Navigation.findNavController(view).popBackStack();
         });
 
         return binding.getRoot();
@@ -88,7 +89,9 @@ public class SignUpFragment extends Fragment {
             navigateToFeed(view);
         };
 
-        Listener<Void> createUserFailListener = unused -> Toast.makeText(getActivity(), "Register failed", Toast.LENGTH_SHORT).show();
+        Listener<Void> createUserFailListener = unused -> {
+            Toast.makeText(getActivity(), "Register failed", Toast.LENGTH_SHORT).show();
+        };
 
         if (isAvatarSelected) {
             Bitmap bitmap = ((BitmapDrawable) binding.avatarImg.getDrawable()).getBitmap();
@@ -102,7 +105,6 @@ public class SignUpFragment extends Fragment {
         } else {
             UsersModel.instance().registerUser(user, password, createUserSuccessListener, createUserFailListener);
         }
-
     }
 
     private Optional<String> validateUser(User user, String password){
@@ -122,5 +124,6 @@ public class SignUpFragment extends Fragment {
     }
 
     private void navigateToFeed(View view) {
+        Navigation.findNavController(view).navigate(SignUpFragmentDirections.actionSignUpFragmentToUserProfileFragment());
     }
 }
