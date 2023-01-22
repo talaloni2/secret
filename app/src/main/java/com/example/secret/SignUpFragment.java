@@ -55,6 +55,7 @@ public class SignUpFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentSignUpBinding.inflate(inflater, container, false);
+        binding.registerProgressBar.setVisibility(View.INVISIBLE);
 
         binding.registerBtn.setOnClickListener(this::performRegister);
 
@@ -74,6 +75,8 @@ public class SignUpFragment extends Fragment {
     }
 
     private void performRegister(View view) {
+        binding.registerProgressBar.setVisibility(View.VISIBLE);
+        binding.registerProgressBar.requestFocus();
         String email = binding.emailEt.getText().toString();
         String password = binding.passwordEt.getText().toString();
         String nickname = binding.nicknameEt.getText().toString();
@@ -86,10 +89,12 @@ public class SignUpFragment extends Fragment {
 
         Listener<Void> createUserSuccessListener = unused -> {
             Toast.makeText(getActivity(), "Registered successfully", Toast.LENGTH_SHORT).show();
+            binding.registerProgressBar.setVisibility(View.INVISIBLE);
             navigateToFeed(view);
         };
 
         Listener<Void> createUserFailListener = unused -> {
+            binding.registerProgressBar.setVisibility(View.INVISIBLE);
             Toast.makeText(getActivity(), "Register failed", Toast.LENGTH_SHORT).show();
         };
 

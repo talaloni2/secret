@@ -104,14 +104,19 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-
-                <Button
-                    android:id="@+id/registerBtn"
+                <FrameLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="REGISTER" />
+                    android:layout_margin="8dp">
+
+                    <Button
+                        android:id="@+id/registerBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="REGISTER" />
+
+                </FrameLayout>
 
 
                 <Button
@@ -123,6 +128,13 @@
                     android:text="CANCEL" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/registerProgressBar"
+                android:layout_gravity="center"
+                >
+            </ProgressBar>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
     </ScrollView>
