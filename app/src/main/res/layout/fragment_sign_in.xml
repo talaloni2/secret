@@ -84,6 +84,14 @@
                     android:text="I'M NEW HERE" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/signInProgressBar"
+                android:layout_gravity="center"
+                >
+            </ProgressBar>
+
 
         </androidx.appcompat.widget.LinearLayoutCompat>
     </ScrollView>
