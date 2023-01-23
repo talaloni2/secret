@@ -25,6 +25,7 @@ public class SignInFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentSignInBinding.inflate(inflater, container, false);
+        binding.signInProgressBar.setVisibility(View.INVISIBLE);
 
         NavDirections navToSignUp = SignInFragmentDirections.actionSignInFragmentToSignUpFragment();
         binding.registerBtn.setOnClickListener(Navigation.createNavigateOnClickListener(navToSignUp));
@@ -45,12 +46,19 @@ public class SignInFragment extends Fragment {
     }
 
     private void signIn(View view) {
+        binding.signInProgressBar.setVisibility(View.VISIBLE);
         String email = binding.emailEt.getText().toString();
         String password = binding.passwordEt.getText().toString();
 
         NavDirections navToAuthenticated = SignInFragmentDirections.actionSignInFragmentToUserProfileFragment();
-        Listener<Void> signInSuccess = unused -> Navigation.findNavController(view).navigate(navToAuthenticated);
-        Listener<Void> signInFailed = unused -> Toast.makeText(getActivity(), "Email or password are incorrect", Toast.LENGTH_SHORT).show();
+        Listener<Void> signInSuccess = unused -> {
+            binding.signInProgressBar.setVisibility(View.INVISIBLE);
+            Navigation.findNavController(view).navigate(navToAuthenticated);
+        };
+        Listener<Void> signInFailed = unused -> {
+            binding.signInProgressBar.setVisibility(View.INVISIBLE);
+            Toast.makeText(getActivity(), "Email or password are incorrect", Toast.LENGTH_SHORT).show();
+        };
 
         UsersModel.instance().signIn(email, password, signInSuccess, signInFailed);
     }
