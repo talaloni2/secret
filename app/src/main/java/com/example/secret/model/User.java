@@ -25,6 +25,10 @@ public class User {
     public String avatarUrl = "";
     public Long lastUpdated;
 
+    public String bio = "";
+
+    public int maxDaysBackPosts = 10;
+
     public User() {
     }
 
