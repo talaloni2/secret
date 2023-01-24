@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavDirections;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 
 import com.example.secret.databinding.FragmentSignInBinding;
@@ -40,7 +41,7 @@ public class SignInFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         if (UsersModel.instance().isUserConnected()) {
-            NavDirections navToAuthenticated = SignInFragmentDirections.actionSignInFragmentToUserProfileFragment();
+            NavDirections navToAuthenticated = SignInFragmentDirections.actionSignInFragmentToUserSettingsFragment();
             setUser(view, navToAuthenticated);
         }
     }
@@ -50,7 +51,7 @@ public class SignInFragment extends Fragment {
         String email = binding.emailEt.getText().toString();
         String password = binding.passwordEt.getText().toString();
 
-        NavDirections navToAuthenticated = SignInFragmentDirections.actionSignInFragmentToUserProfileFragment();
+        NavDirections navToAuthenticated = SignInFragmentDirections.actionSignInFragmentToUserSettingsFragment();
         Listener<Void> signInSuccess = unused -> {
             setUser(view, navToAuthenticated);
             ;

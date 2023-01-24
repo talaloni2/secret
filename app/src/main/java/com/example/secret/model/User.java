@@ -2,6 +2,7 @@ package com.example.secret.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
@@ -60,7 +61,7 @@ public class User {
         String avatar = (String) json.get(AVATAR);
         String email = (String) json.get(EMAIL);
         String bio = (String) json.get(BIO);
-        int maxDaysBackPosts = Optional.ofNullable((Integer) json.get(MAX_DAYS_BACK_POSTS)).orElse(10);
+        int maxDaysBackPosts = Optional.ofNullable((Long) json.get(MAX_DAYS_BACK_POSTS)).orElse(10l).intValue();
         User st = new User(id, nickname, avatar, email, bio, maxDaysBackPosts);
         try {
             Timestamp time = (Timestamp) json.get(LAST_UPDATED);

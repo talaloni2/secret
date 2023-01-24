@@ -60,7 +60,7 @@ public class FirebaseModel {
                 Log.d(TAG, "createUserWithEmail:success");
                 FirebaseUser fbUser = auth.getCurrentUser();
                 user.setId(fbUser.getUid());
-                addUser(user, successListener);
+                setUser(user, successListener, failListener);
             } else {
                 Log.w(TAG, "createUserWithEmail:failure", task.getException());
                 failListener.onComplete(null);
@@ -68,9 +68,16 @@ public class FirebaseModel {
         });
     }
 
-    public void addUser(User user, Listener<Void> listener) {
+    public void setUser(User user, Listener<Void> successListener, Listener<Void> failListener) {
         db.collection(User.COLLECTION).document(user.getId()).set(user.toJson())
-                .addOnCompleteListener(task -> listener.onComplete(null));
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        successListener.onComplete(null);
+                        return;
+                    }
+                    Log.e("SetUser", "Could not set User");
+                    failListener.onComplete(null);
+                });
     }
 
     void uploadImage(String name, Bitmap bitmap, Listener<String> listener) {
@@ -93,6 +100,7 @@ public class FirebaseModel {
     public boolean isUserConnected() {
         return auth.getCurrentUser() != null;
     }
+
     public void getCurrentUser(Listener<User> onCurrentUserReceived, Listener<Void> onCurrentUserNotReceived) {
         FirebaseUser firebaseUser = auth.getCurrentUser();
         if (firebaseUser == null) {
@@ -102,9 +110,9 @@ public class FirebaseModel {
 
         db.collection(User.COLLECTION).document(firebaseUser.getUid()).get().addOnCompleteListener(
                 task -> {
-                    if (task.isSuccessful()){
+                    if (task.isSuccessful()) {
                         DocumentSnapshot document = task.getResult();
-                        if(document.exists()){
+                        if (document.exists()) {
                             User u = User.fromJson(document.getData());
                             onCurrentUserReceived.onComplete(u);
                             return;
@@ -118,7 +126,7 @@ public class FirebaseModel {
 
     public void signIn(String email, String password, Listener<Void> successListener, Listener<Void> failedListener) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
-            if (task.isSuccessful()){
+            if (task.isSuccessful()) {
                 successListener.onComplete(null);
                 return;
             }

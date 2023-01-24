@@ -46,5 +46,9 @@ public class UsersModel {
     public void getCurrentUser(Listener<User> onUserReceived, Listener<Void> onUserNotReceived){
         firebaseModel.getCurrentUser(onUserReceived, onUserNotReceived);
     }
+
+    public void updateUser(User user, Listener<Void> successListener, Listener<Void> failedListener) {
+        firebaseModel.setUser(user, successListener, failedListener);
+    }
 }
 

@@ -1,64 +1,163 @@
 package com.example.secret;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link UserSettingsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import com.example.secret.databinding.FragmentUserSettingsBinding;
+import com.example.secret.interfaces.Listener;
+import com.example.secret.model.User;
+import com.example.secret.model.UsersModel;
+import com.example.secret.viewmodel.UsersViewModel;
+import com.squareup.picasso.Picasso;
+
+import java.util.Optional;
+import java.util.UUID;
+
 public class UserSettingsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    FragmentUserSettingsBinding binding;
+    User currentUser;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    ActivityResultLauncher<Void> cameraLauncher;
+    ActivityResultLauncher<String> galleryLauncher;
 
-    public UserSettingsFragment() {
-        // Required empty public constructor
-    }
+    static final String TAG = "UpdateProfile";
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment UserSettingsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static UserSettingsFragment newInstance(String param1, String param2) {
-        UserSettingsFragment fragment = new UserSettingsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    static final int MAX_DAYS_BACK_MAX = 100;
+    static final int MAX_DAYS_BACK_MIN = 1;
+
+    private boolean isAvatarChanged = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        currentUser = UsersViewModel.instance().getCurrentUser();
+
+        cameraLauncher = registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), result -> {
+            if (result != null) {
+                binding.avatarImg.setImageBitmap(result);
+                isAvatarChanged = true;
+            }
+        });
+        galleryLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
+            if (result != null) {
+                binding.avatarImg.setImageURI(result);
+                isAvatarChanged = true;
+            }
+        });
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_settings, container, false);
+        binding = FragmentUserSettingsBinding.inflate(inflater, container, false);
+        instantiateViews();
+
+        binding.updateProfileBtn.setOnClickListener(this::onUpdateProfileClicked);
+
+        return binding.getRoot();
+    }
+
+    private void setMaxDaysBackPostsPicker(int currentMaxDaysBackPosts) {
+        binding.maxDaysBackPicker.setMaxValue(MAX_DAYS_BACK_MAX);
+        binding.maxDaysBackPicker.setMinValue(MAX_DAYS_BACK_MIN);
+        binding.maxDaysBackPicker.setValue(currentMaxDaysBackPosts);
+    }
+
+    private void onUpdateProfileClicked(View view) {
+        makeProgressBarVisible();
+        currentUser.setBio(binding.bioEt.getText().toString());
+        currentUser.setMaxDaysBackPosts(binding.maxDaysBackPicker.getValue());
+        currentUser.setNickname(binding.nicknameEt.getText().toString());
+
+        validateUser(currentUser,
+                this::onUpdateProfileUserValidated,
+                validationError -> {
+                    makeProgressBarInVisible();
+                    Toast.makeText(view.getContext(), validationError, Toast.LENGTH_SHORT).show();
+                }
+        );
+
+    }
+
+    private void instantiateViews(){
+        binding.nicknameEt.setText(currentUser.nickname);
+        binding.userEmailTV.setText(currentUser.email);
+        binding.bioEt.setText(currentUser.bio);
+        binding.maxDaysBackPicker.setValue(currentUser.maxDaysBackPosts);
+        Picasso.get().load(currentUser.getAvatarUrl()).placeholder(R.drawable.avatar).into(binding.avatarImg);
+        makeProgressBarInVisible();
+        setMaxDaysBackPostsPicker(currentUser.maxDaysBackPosts);
+        binding.cameraButton.setOnClickListener(view1 -> {
+            cameraLauncher.launch(null);
+        });
+
+        binding.galleryButton.setOnClickListener(view1 -> {
+            galleryLauncher.launch("image/*");
+        });
+    }
+
+    private void makeProgressBarVisible() {
+        binding.updateProfileProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void makeProgressBarInVisible() {
+        binding.updateProfileProgressBar.setVisibility(View.INVISIBLE);
+    }
+
+    private void onUpdateProfileUserValidated(Void unused) {
+        Listener<Void> updateUserSuccessListener = success -> {
+            UsersViewModel.instance().setUser(
+                    _success -> {
+                        makeProgressBarInVisible();
+                        Toast.makeText(getActivity(), "Updated profile successfully", Toast.LENGTH_SHORT).show();
+                    },
+                    this::onUpdateUserFailed
+            );
+        };
+
+        Listener<Void> updateUserFailListener = this::onUpdateUserFailed;
+
+        performRegisterWithAvatar(updateUserSuccessListener, updateUserFailListener);
+    }
+
+    private void onUpdateUserFailed(Void unused) {
+        makeProgressBarInVisible();
+        Toast.makeText(getActivity(), "Could not update profile", Toast.LENGTH_SHORT).show();
+    }
+
+    private void validateUser(User user, Listener<Void> valid, Listener<String> invalid) {
+        if (user.getNickname().length() <= 5) {
+            invalid.onComplete("Nickname is either invalid or already taken");
+        }
+        valid.onComplete(null);
+    }
+
+    private void performRegisterWithAvatar(Listener<Void> createUserSuccessListener, Listener<Void> createUserFailListener) {
+        if (isAvatarChanged) {
+            Bitmap bitmap = ((BitmapDrawable) binding.avatarImg.getDrawable()).getBitmap();
+            UsersModel.instance().uploadImage(UUID.randomUUID().toString(), bitmap, url -> {
+                if (url == null) {
+                    Log.w(TAG, "Could not save image. The older image will remain");
+                }
+                else {
+                    currentUser.setAvatarUrl(url);
+                }
+                UsersModel.instance().updateUser(currentUser, createUserSuccessListener, createUserFailListener);
+            });
+        } else {
+            UsersModel.instance().updateUser(currentUser, createUserSuccessListener, createUserFailListener);
+        }
     }
 }

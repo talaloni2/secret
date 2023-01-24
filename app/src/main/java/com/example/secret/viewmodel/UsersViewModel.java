@@ -1,15 +1,19 @@
 package com.example.secret.viewmodel;
 
+import android.graphics.Bitmap;
+
 import com.example.secret.interfaces.Listener;
 import com.example.secret.model.FirebaseModel;
 import com.example.secret.model.User;
 import com.example.secret.model.UsersModel;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class UsersViewModel {
 
     private User currentUser;
+    private Bitmap userAvatar;
 
     private static final UsersViewModel _instance = new UsersViewModel();
 
