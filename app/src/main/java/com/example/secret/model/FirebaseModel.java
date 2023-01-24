@@ -90,8 +90,30 @@ public class FirebaseModel {
 
     }
 
-    public FirebaseUser getCurrentUser() {
-        return auth.getCurrentUser();
+    public boolean isUserConnected() {
+        return auth.getCurrentUser() != null;
+    }
+    public void getCurrentUser(Listener<User> onCurrentUserReceived, Listener<Void> onCurrentUserNotReceived) {
+        FirebaseUser firebaseUser = auth.getCurrentUser();
+        if (firebaseUser == null) {
+            onCurrentUserNotReceived.onComplete(null);
+            return;
+        }
+
+        db.collection(User.COLLECTION).document(firebaseUser.getUid()).get().addOnCompleteListener(
+                task -> {
+                    if (task.isSuccessful()){
+                        DocumentSnapshot document = task.getResult();
+                        if(document.exists()){
+                            User u = User.fromJson(document.getData());
+                            onCurrentUserReceived.onComplete(u);
+                            return;
+                        }
+                    }
+                    Log.w("GetCurrentUser", "Could not get user from store, auth was successful");
+                    onCurrentUserNotReceived.onComplete(null);
+                }
+        );
     }
 
     public void signIn(String email, String password, Listener<Void> successListener, Listener<Void> failedListener) {

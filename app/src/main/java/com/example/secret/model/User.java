@@ -14,6 +14,7 @@ import com.google.firebase.firestore.FieldValue;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Entity
 public class User {
@@ -32,11 +33,13 @@ public class User {
     public User() {
     }
 
-    public User(@NonNull String id, String nickname, String avatarUrl, String email) {
+    public User(@NonNull String id, String nickname, String avatarUrl, String email, String bio, int maxDaysBackPosts) {
         this.nickname = nickname;
         this.id = id;
         this.avatarUrl = avatarUrl;
         this.email = email;
+        this.bio = bio;
+        this.maxDaysBackPosts = maxDaysBackPosts;
     }
 
     static final String NICKNAME = "nickname";
@@ -47,12 +50,18 @@ public class User {
     static final String LAST_UPDATED = "lastUpdated";
     static final String LOCAL_LAST_UPDATED = "Users_local_last_update";
 
+    static final String BIO = "bio";
+
+    static final String MAX_DAYS_BACK_POSTS = "maxDaysBackPosts";
+
     public static User fromJson(Map<String, Object> json) {
         String id = (String) json.get(ID);
         String nickname = (String) json.get(NICKNAME);
         String avatar = (String) json.get(AVATAR);
         String email = (String) json.get(EMAIL);
-        User st = new User(id, nickname, avatar, email);
+        String bio = (String) json.get(BIO);
+        int maxDaysBackPosts = Optional.ofNullable((Integer) json.get(MAX_DAYS_BACK_POSTS)).orElse(10);
+        User st = new User(id, nickname, avatar, email, bio, maxDaysBackPosts);
         try {
             Timestamp time = (Timestamp) json.get(LAST_UPDATED);
             st.setLastUpdated(time.getSeconds());
@@ -81,6 +90,8 @@ public class User {
         json.put(AVATAR, getAvatarUrl());
         json.put(EMAIL, getEmail());
         json.put(LAST_UPDATED, FieldValue.serverTimestamp());
+        json.put(BIO, getBio());
+        json.put(MAX_DAYS_BACK_POSTS, getMaxDaysBackPosts());
         return json;
     }
 
@@ -98,6 +109,14 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public void setMaxDaysBackPosts(int maxDaysBackPosts) {
+        this.maxDaysBackPosts = maxDaysBackPosts;
     }
 
     @NonNull
@@ -123,5 +142,13 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public int getMaxDaysBackPosts() {
+        return maxDaysBackPosts;
     }
 }

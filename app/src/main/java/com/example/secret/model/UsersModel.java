@@ -31,7 +31,7 @@ public class UsersModel {
     }
 
     public boolean isUserConnected() {
-        return firebaseModel.getCurrentUser() != null;
+        return firebaseModel.isUserConnected();
     }
 
     public void registerUser(User user, String password,
@@ -41,6 +41,10 @@ public class UsersModel {
 
     public void signIn(String email, String password, Listener<Void> successListener, Listener<Void> failedListener) {
         firebaseModel.signIn(email, password, successListener, failedListener);
+    }
+
+    public void getCurrentUser(Listener<User> onUserReceived, Listener<Void> onUserNotReceived){
+        firebaseModel.getCurrentUser(onUserReceived, onUserNotReceived);
     }
 }
 

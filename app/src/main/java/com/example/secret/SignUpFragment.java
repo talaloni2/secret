@@ -20,6 +20,7 @@ import com.example.secret.databinding.FragmentSignUpBinding;
 import com.example.secret.interfaces.Listener;
 import com.example.secret.model.User;
 import com.example.secret.model.UsersModel;
+import com.example.secret.viewmodel.UsersViewModel;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -87,9 +88,17 @@ public class SignUpFragment extends Fragment {
         }
 
         Listener<Void> createUserSuccessListener = unused -> {
-            Toast.makeText(getActivity(), "Registered successfully", Toast.LENGTH_SHORT).show();
-            binding.registerProgressBar.setVisibility(View.INVISIBLE);
-            navigateToFeed(view);
+            UsersViewModel.instance().setUser(
+                    success -> {
+                        binding.registerProgressBar.setVisibility(View.INVISIBLE);
+                        Toast.makeText(getActivity(), "Registered successfully", Toast.LENGTH_SHORT).show();
+                        navigateToFeed(view);
+                    },
+                    fail -> {
+                        binding.registerProgressBar.setVisibility(View.INVISIBLE);
+                        Toast.makeText(getActivity(), "Sign in with your new credentials", Toast.LENGTH_SHORT).show();
+                    }
+            );
         };
 
         Listener<Void> createUserFailListener = unused -> {
@@ -119,8 +128,7 @@ public class SignUpFragment extends Fragment {
     private User composeUser() {
         String email = binding.emailEt.getText().toString();
         String nickname = binding.nicknameEt.getText().toString();
-        User user = new User("", nickname, null, email);
-        return user;
+        return new User("", nickname, null, email, "", 10);
     }
 
     private Optional<String> validateUser(User user, String password){

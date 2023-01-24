@@ -15,6 +15,7 @@ import androidx.navigation.Navigation;
 import com.example.secret.databinding.FragmentSignInBinding;
 import com.example.secret.interfaces.Listener;
 import com.example.secret.model.UsersModel;
+import com.example.secret.viewmodel.UsersViewModel;
 
 public class SignInFragment extends Fragment {
 
@@ -38,10 +39,9 @@ public class SignInFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (UsersModel.instance().isUserConnected()){
-            Navigation.findNavController(binding.getRoot()).navigate(
-                    SignInFragmentDirections.actionSignInFragmentToUserProfileFragment()
-            );
+        if (UsersModel.instance().isUserConnected()) {
+            NavDirections navToAuthenticated = SignInFragmentDirections.actionSignInFragmentToUserProfileFragment();
+            setUser(view, navToAuthenticated);
         }
     }
 
@@ -52,8 +52,8 @@ public class SignInFragment extends Fragment {
 
         NavDirections navToAuthenticated = SignInFragmentDirections.actionSignInFragmentToUserProfileFragment();
         Listener<Void> signInSuccess = unused -> {
-            binding.signInProgressBar.setVisibility(View.INVISIBLE);
-            Navigation.findNavController(view).navigate(navToAuthenticated);
+            setUser(view, navToAuthenticated);
+            ;
         };
         Listener<Void> signInFailed = unused -> {
             binding.signInProgressBar.setVisibility(View.INVISIBLE);
@@ -61,6 +61,18 @@ public class SignInFragment extends Fragment {
         };
 
         UsersModel.instance().signIn(email, password, signInSuccess, signInFailed);
+    }
+
+    private void setUser(View view, NavDirections navToAuthenticated) {
+        UsersViewModel.instance().setUser(
+                success -> {
+                    binding.signInProgressBar.setVisibility(View.INVISIBLE);
+                    Navigation.findNavController(view).navigate(navToAuthenticated);
+                },
+                fail -> {
+                    binding.signInProgressBar.setVisibility(View.INVISIBLE);
+                    Toast.makeText(getActivity(), "Could not get user data. authentication was successful", Toast.LENGTH_SHORT).show();
+                });
     }
 
 }
