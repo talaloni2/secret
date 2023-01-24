@@ -27,7 +27,8 @@
                 <FrameLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:layout_margin="10dp">
 
                     <ImageView
                         android:id="@+id/avatarImg"
@@ -67,7 +68,8 @@
                         android:id="@+id/nicknameEt"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Nickname" />
+                        android:hint="Nickname"
+                        android:layout_margin="10dp"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
@@ -111,22 +113,24 @@
                     />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
-                app:startIconDrawable="@drawable/ic_baseline_public_24">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/maxDaysBackET"
-                    android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:inputType="number"
-                    />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_weight=".8"
+                    android:layout_gravity="center"
+                    android:textAlignment="center"
+                    android:text="Max days back to display posts"
+                    android:layout_margin="10dp"/>
+            <NumberPicker
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:layout_margin="10dp"
+                android:layout_weight=".2"
+                android:id="@+id/maxDaysBackPicker"/>
+            </LinearLayout>
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
@@ -135,25 +139,16 @@
 
 
                 <Button
-                    android:id="@+id/registerBtn"
+                    android:id="@+id/updateProfileBtn"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_margin="8dp"
+                    android:layout_margin="10dp"
                     android:layout_weight="1"
-                    android:text="REGISTER" />
-
-
-                <Button
-                    android:id="@+id/cancelBtn"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
-                    android:layout_weight="1"
-                    android:text="CANCEL" />
+                    android:text="Update Profile" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
             <ProgressBar
-                android:id="@+id/registerProgressBar"
+                android:id="@+id/updateProfileProgressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"/>
