@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.secret.viewmodel.UsersViewModel;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -30,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.main_navhost);
         navController = navHostFragment.getNavController();
         NavigationUI.setupActionBarWithNavController(this, navController, new AppBarConfiguration.Builder(getTopLevelFragments()).build());
+
+        BottomNavigationView navView = findViewById(R.id.main_bottomNavigationView);
+        NavigationUI.setupWithNavController(navView, navController);
     }
 
     private Set<Integer> getTopLevelFragments() {

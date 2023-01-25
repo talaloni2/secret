@@ -17,10 +17,16 @@ import com.example.secret.viewmodel.UsersViewModel;
 
 public class InitFragment extends Fragment {
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         FragmentInitBinding binding = FragmentInitBinding.inflate(inflater, container, false);
+        getActivity().findViewById(R.id.main_bottomNavigationView).setVisibility(View.INVISIBLE);
 
         return binding.getRoot();
     }
@@ -28,6 +34,7 @@ public class InitFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         if (UsersModel.instance().isUserConnected()) {
             setUser(view);
             return;

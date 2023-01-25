@@ -42,6 +42,7 @@ public class UserSettingsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivity().findViewById(R.id.main_bottomNavigationView).setVisibility(View.VISIBLE);
         currentUser = UsersViewModel.instance().getCurrentUser();
 
         cameraLauncher = registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), result -> {
@@ -96,7 +97,11 @@ public class UserSettingsFragment extends Fragment {
         binding.userEmailTV.setText(currentUser.email);
         binding.bioEt.setText(currentUser.bio);
         binding.maxDaysBackPicker.setValue(currentUser.maxDaysBackPosts);
-        Picasso.get().load(currentUser.getAvatarUrl()).placeholder(R.drawable.avatar).into(binding.avatarImg);
+        if (currentUser.getAvatarUrl() != null && currentUser.getAvatarUrl().length() > 5) {
+            Picasso.get().load(currentUser.getAvatarUrl()).placeholder(R.drawable.avatar).into(binding.avatarImg);
+        } else {
+            binding.avatarImg.setImageResource(R.drawable.avatar);
+        }
         makeProgressBarInVisible();
         setMaxDaysBackPostsPicker(currentUser.maxDaysBackPosts);
         binding.cameraButton.setOnClickListener(view1 -> {
