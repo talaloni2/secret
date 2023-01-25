@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
                 Arrays.asList(
                         R.id.signInFragment,
                         R.id.userSettingsFragment,
-                        R.id.signUpFragment,
                         R.id.initFragment
                 )
         );
@@ -56,7 +55,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.signInFragment) {
+        if (item.getItemId() == android.R.id.home){
+            navController.popBackStack();
+        }else if (item.getItemId() == R.id.signInFragment) {
             UsersViewModel.instance().signOut();
             navController.navigate(R.id.signInFragment);
             return super.onOptionsItemSelected(item);
