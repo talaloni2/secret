@@ -96,7 +96,11 @@ public class UserSettingsFragment extends Fragment {
         binding.userEmailTV.setText(currentUser.email);
         binding.bioEt.setText(currentUser.bio);
         binding.maxDaysBackPicker.setValue(currentUser.maxDaysBackPosts);
-        Picasso.get().load(currentUser.getAvatarUrl()).placeholder(R.drawable.avatar).into(binding.avatarImg);
+        if (currentUser.getAvatarUrl() != null && currentUser.getAvatarUrl().length() > 5) {
+            Picasso.get().load(currentUser.getAvatarUrl()).placeholder(R.drawable.avatar).into(binding.avatarImg);
+        } else {
+            binding.avatarImg.setImageResource(R.drawable.avatar);
+        }
         makeProgressBarInVisible();
         setMaxDaysBackPostsPicker(currentUser.maxDaysBackPosts);
         binding.cameraButton.setOnClickListener(view1 -> {
