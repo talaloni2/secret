@@ -47,4 +47,13 @@
         android:name="com.example.secret.UserProfileFragment"
         android:label="User Profile"
         tools:layout="@layout/fragment_user_profile" />
+    <fragment
+        android:id="@+id/createPostFragment"
+        android:name="com.example.secret.CreatePostFragment"
+        android:label="fragment_create_post"
+        tools:layout="@layout/fragment_create_post" >
+        <action
+            android:id="@+id/action_createPostFragment_to_userSettingsFragment"
+            app:destination="@id/userSettingsFragment" />
+    </fragment>
 </navigation>

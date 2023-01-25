@@ -21,7 +21,6 @@ import com.example.secret.model.UsersModel;
 import com.example.secret.viewmodel.UsersViewModel;
 import com.squareup.picasso.Picasso;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class UserSettingsFragment extends Fragment {
@@ -134,7 +133,7 @@ public class UserSettingsFragment extends Fragment {
 
         Listener<Void> updateUserFailListener = this::onUpdateUserFailed;
 
-        performRegisterWithAvatar(updateUserSuccessListener, updateUserFailListener);
+        performUpdateUserWithAvatar(updateUserSuccessListener, updateUserFailListener);
     }
 
     private void onUpdateUserFailed(Void unused) {
@@ -149,7 +148,7 @@ public class UserSettingsFragment extends Fragment {
         valid.onComplete(null);
     }
 
-    private void performRegisterWithAvatar(Listener<Void> createUserSuccessListener, Listener<Void> createUserFailListener) {
+    private void performUpdateUserWithAvatar(Listener<Void> createUserSuccessListener, Listener<Void> createUserFailListener) {
         if (isAvatarChanged) {
             Bitmap bitmap = ((BitmapDrawable) binding.avatarImg.getDrawable()).getBitmap();
             UsersModel.instance().uploadImage(UUID.randomUUID().toString(), bitmap, url -> {

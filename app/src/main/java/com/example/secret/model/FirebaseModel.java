@@ -137,4 +137,16 @@ public class FirebaseModel {
     public void signOut() {
         auth.signOut();
     }
+
+    public void setPost(Post post, Listener<Void> successListener, Listener<Void> failListener) {
+        db.collection(Post.COLLECTION).document(post.getId()).set(post.toJson())
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        successListener.onComplete(null);
+                        return;
+                    }
+                    Log.e("SetPost", "Could not set Post");
+                    failListener.onComplete(null);
+                });
+    }
 }
