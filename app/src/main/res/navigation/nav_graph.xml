@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/signUpFragment"
         android:name="com.example.secret.SignUpFragment"
-        android:label="fragment_sign_up"
+        android:label="Sign Up"
         tools:layout="@layout/fragment_sign_up" >
         <action
             android:id="@+id/action_signUpFragment_to_userSettingsFragment"
@@ -17,7 +17,7 @@
     <fragment
         android:id="@+id/signInFragment"
         android:name="com.example.secret.SignInFragment"
-        android:label="SignInFragment" >
+        android:label="Sign In" >
         <action
             android:id="@+id/action_signInFragment_to_signUpFragment"
             app:destination="@id/signUpFragment" />
@@ -28,12 +28,12 @@
     <fragment
         android:id="@+id/userSettingsFragment"
         android:name="com.example.secret.UserSettingsFragment"
-        android:label="fragment_user_settings"
+        android:label="User Settings"
         tools:layout="@layout/fragment_user_settings" />
     <fragment
         android:id="@+id/initFragment"
         android:name="com.example.secret.InitFragment"
-        android:label="fragment_init"
+        android:label="Secret"
         tools:layout="@layout/fragment_init" >
         <action
             android:id="@+id/action_initFragment_to_userSettingsFragment"
