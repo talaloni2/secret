@@ -42,6 +42,7 @@ public class UserSettingsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getActivity().findViewById(R.id.main_bottomNavigationView).setVisibility(View.VISIBLE);
         currentUser = UsersViewModel.instance().getCurrentUser();
 
         cameraLauncher = registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), result -> {
