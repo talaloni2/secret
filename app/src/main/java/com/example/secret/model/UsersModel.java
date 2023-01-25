@@ -50,5 +50,9 @@ public class UsersModel {
     public void updateUser(User user, Listener<Void> successListener, Listener<Void> failedListener) {
         firebaseModel.setUser(user, successListener, failedListener);
     }
+
+    public void signOut() {
+        firebaseModel.signOut();
+    }
 }
 

@@ -133,4 +133,8 @@ public class FirebaseModel {
             failedListener.onComplete(null);
         });
     }
+
+    public void signOut() {
+        auth.signOut();
+    }
 }
