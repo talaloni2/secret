@@ -37,15 +37,6 @@ public class SignInFragment extends Fragment {
         return binding.getRoot();
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        if (UsersModel.instance().isUserConnected()) {
-            NavDirections navToAuthenticated = SignInFragmentDirections.actionSignInFragmentToUserSettingsFragment();
-            setUser(view, navToAuthenticated);
-        }
-    }
-
     private void signIn(View view) {
         binding.signInProgressBar.setVisibility(View.VISIBLE);
         String email = binding.emailEt.getText().toString();

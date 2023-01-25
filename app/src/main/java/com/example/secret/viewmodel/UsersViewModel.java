@@ -13,7 +13,6 @@ import java.util.List;
 public class UsersViewModel {
 
     private User currentUser;
-    private Bitmap userAvatar;
 
     private static final UsersViewModel _instance = new UsersViewModel();
 
@@ -33,6 +32,11 @@ public class UsersViewModel {
             currentUser = user;
             onSetUserSuccess.onComplete(null);
         }, onSetUserFailed);
+    }
+
+    public void signOut() {
+        this.currentUser = null;
+        UsersModel.instance().signOut();
     }
 
 }
