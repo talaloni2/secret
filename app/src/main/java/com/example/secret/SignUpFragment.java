@@ -20,6 +20,7 @@ import com.example.secret.databinding.FragmentSignUpBinding;
 import com.example.secret.interfaces.Listener;
 import com.example.secret.model.User;
 import com.example.secret.model.UsersModel;
+import com.example.secret.viewmodel.UsersViewModel;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -80,16 +81,26 @@ public class SignUpFragment extends Fragment {
         binding.registerProgressBar.setVisibility(View.VISIBLE);
         User user = composeUser();
         String password = binding.passwordEt.getText().toString();
-        Optional<String> validationError = validateUser(user, password);
-        if(validationError.isPresent()){
-            Toast.makeText(getActivity(), validationError.get(), Toast.LENGTH_SHORT).show();
-            return;
-        }
 
+        validateUser(user, password,
+                valid -> onUserValid(view, user, password),
+                validationError -> Toast.makeText(getActivity(), validationError, Toast.LENGTH_SHORT).show()
+        );
+    }
+
+    private void onUserValid(View view, User user, String password) {
         Listener<Void> createUserSuccessListener = unused -> {
-            Toast.makeText(getActivity(), "Registered successfully", Toast.LENGTH_SHORT).show();
-            binding.registerProgressBar.setVisibility(View.INVISIBLE);
-            navigateToFeed(view);
+            UsersViewModel.instance().setUser(
+                    success -> {
+                        binding.registerProgressBar.setVisibility(View.INVISIBLE);
+                        Toast.makeText(getActivity(), "Registered successfully", Toast.LENGTH_SHORT).show();
+                        navigateToFeed(view);
+                    },
+                    fail -> {
+                        binding.registerProgressBar.setVisibility(View.INVISIBLE);
+                        Toast.makeText(getActivity(), "Sign in with your new credentials", Toast.LENGTH_SHORT).show();
+                    }
+            );
         };
 
         Listener<Void> createUserFailListener = unused -> {
@@ -119,27 +130,30 @@ public class SignUpFragment extends Fragment {
     private User composeUser() {
         String email = binding.emailEt.getText().toString();
         String nickname = binding.nicknameEt.getText().toString();
-        User user = new User("", nickname, null, email);
-        return user;
+        return new User("", nickname, null, email, "", 10);
     }
 
-    private Optional<String> validateUser(User user, String password){
+    private void validateUser(User user, String password, Listener<Void> valid, Listener<String> invalid) {
         String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
                 + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
         String passwordAtLeast8WithOneCharOneNum = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$";
         boolean isEmailValid = Pattern.compile(regexPattern).matcher(user.email).matches();
         boolean isPasswordValid = Pattern.compile(passwordAtLeast8WithOneCharOneNum).matcher(password).matches();
+        boolean isNicknameValid = user.nickname.length() > 5; //TODO: add validation for unique nickname
 
-        if (!isEmailValid){
-            return Optional.of("Email is invalid");
+        if (!isEmailValid) {
+            invalid.onComplete("Email is invalid");
         }
-        if (!isPasswordValid){
-            return Optional.of("Password must contain 8 characters, with one letter and one number");
+        if (!isPasswordValid) {
+            invalid.onComplete("Password must contain 8 characters, with one letter and one number");
         }
-        return Optional.empty();
+        if (!isNicknameValid) {
+            invalid.onComplete("Nickname is either invalid or already used");
+        }
+        valid.onComplete(null);
     }
 
     private void navigateToFeed(View view) {
-        Navigation.findNavController(view).navigate(SignUpFragmentDirections.actionSignUpFragmentToUserProfileFragment());
+        Navigation.findNavController(view).navigate(SignUpFragmentDirections.actionSignUpFragmentToUserSettingsFragment());
     }
 }

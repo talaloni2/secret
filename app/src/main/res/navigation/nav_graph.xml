@@ -11,8 +11,8 @@
         android:label="fragment_sign_up"
         tools:layout="@layout/fragment_sign_up" >
         <action
-            android:id="@+id/action_signUpFragment_to_userProfileFragment"
-            app:destination="@id/userProfileFragment" />
+            android:id="@+id/action_signUpFragment_to_userSettingsFragment"
+            app:destination="@id/userSettingsFragment" />
     </fragment>
     <fragment
         android:id="@+id/signInFragment"
@@ -22,12 +22,12 @@
             android:id="@+id/action_signInFragment_to_signUpFragment"
             app:destination="@id/signUpFragment" />
         <action
-            android:id="@+id/action_signInFragment_to_userProfileFragment"
-            app:destination="@id/userProfileFragment" />
+            android:id="@+id/action_signInFragment_to_userSettingsFragment"
+            app:destination="@id/userSettingsFragment" />
     </fragment>
     <fragment
-        android:id="@+id/userProfileFragment"
-        android:name="com.example.secret.UserProfileFragment"
-        android:label="fragment_user_profile"
-        tools:layout="@layout/fragment_user_profile" />
+        android:id="@+id/userSettingsFragment"
+        android:name="com.example.secret.UserSettingsFragment"
+        android:label="fragment_user_settings"
+        tools:layout="@layout/fragment_user_settings" />
 </navigation>
