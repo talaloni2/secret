@@ -23,22 +23,27 @@ public class Post {
     public String content = "";
     public Boolean isAnonymous = true;
     public String backgroundUrl = "";
+
+    public String userId = "";
     public Long lastUpdated;
 
     public Post() {
     }
 
-    public Post(@NonNull String id, String content, boolean isAnonymous, String backgroundUrl) {
+    public Post(@NonNull String id, String content, boolean isAnonymous, String backgroundUrl, String userId) {
         this.id = id;
         this.content = content;
         this.isAnonymous = isAnonymous;
         this.backgroundUrl = backgroundUrl;
+        this.userId = userId;
     }
 
     static final String CONTENT = "content";
     static final String ID = "id";
     static final String BACKGROUND = "background";
     static final String ANONYMOUS = "anonymous";
+
+    static final String USER_ID = "userId";
     static final String COLLECTION = "Posts";
     static final String LAST_UPDATED = "lastUpdated";
     static final String LOCAL_LAST_UPDATED = "Posts_local_last_update";
@@ -48,7 +53,8 @@ public class Post {
         String content = (String) json.get(CONTENT);
         String background = (String) json.get(BACKGROUND);
         boolean anonymous = Optional.ofNullable((Boolean) json.get(ANONYMOUS)).orElse(true);
-        Post st = new Post(id, content, anonymous, background);
+        String userId = (String) json.get(USER_ID);
+        Post st = new Post(id, content, anonymous, background, userId);
         try {
             Timestamp time = (Timestamp) json.get(LAST_UPDATED);
             st.setLastUpdated(time.getSeconds());
@@ -76,6 +82,7 @@ public class Post {
         json.put(CONTENT, getContent());
         json.put(ANONYMOUS, getAnonymous());
         json.put(BACKGROUND, getBackgroundUrl());
+        json.put(USER_ID, getUserId());
         json.put(LAST_UPDATED, FieldValue.serverTimestamp());
         return json;
     }
@@ -119,5 +126,13 @@ public class Post {
 
     public void setLastUpdated(Long lastUpdated) {
         this.lastUpdated = lastUpdated;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }
