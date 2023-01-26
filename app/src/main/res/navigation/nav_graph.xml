@@ -50,7 +50,7 @@
     <fragment
         android:id="@+id/createPostFragment"
         android:name="com.example.secret.CreatePostFragment"
-        android:label="fragment_create_post"
+        android:label="Share a Secret"
         tools:layout="@layout/fragment_create_post" >
         <action
             android:id="@+id/action_createPostFragment_to_userSettingsFragment"
