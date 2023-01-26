@@ -78,8 +78,13 @@ public class CreatePostFragment extends Fragment {
         binding.publishPostProgressBar.setVisibility(View.INVISIBLE);
     }
 
+    private void makeProgressBarVisible() {
+        binding.publishPostProgressBar.setVisibility(View.VISIBLE);
+    }
+
     private void onPublishClick(View view){
         String postContent = binding.postContentEt.getText().toString();
+        makeProgressBarVisible();
         boolean isAnonymous = binding.anonymousCbx.isChecked();
 
         if(isBackgroundSelected){

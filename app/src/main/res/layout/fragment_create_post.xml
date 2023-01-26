@@ -51,7 +51,8 @@
         app:layout_constraintTop_toBottomOf="@+id/postContentLayout"
         app:layout_constraintStart_toStartOf="@+id/postContentLayout"
         android:checked="true"
-        android:text="Anonymous"/>
+        android:text="Anonymous"
+        android:textColor="@color/purple_200"/>
 
     <Button
         android:id="@+id/publishButton"
