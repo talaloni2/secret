@@ -41,7 +41,7 @@ public class CreatePostFragment extends Fragment {
         cameraLauncher = registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), result -> {
             if (result != null) {
                 BitmapDrawable background = new BitmapDrawable(getResources(), result);
-                binding.postContentEt.setBackground(background);
+                binding.postContentLayout.setBackground(background);
                 isBackgroundSelected = true;
             }
         });
@@ -49,7 +49,7 @@ public class CreatePostFragment extends Fragment {
             if (result != null) {
                 try {
                     InputStream is = getContext().getContentResolver().openInputStream(result);
-                    binding.postContentEt.setBackground(Drawable.createFromStream(is, result.toString()));
+                    binding.postContentLayout.setBackground(Drawable.createFromStream(is, result.toString()));
                     isBackgroundSelected = true;
                 } catch (FileNotFoundException e) {
                     Toast.makeText(getActivity(), "Could not select image", Toast.LENGTH_SHORT).show();
@@ -85,7 +85,7 @@ public class CreatePostFragment extends Fragment {
         if(isBackgroundSelected){
             PostsModel.instance().uploadBackground(
                     UUID.randomUUID().toString(),
-                    ((BitmapDrawable)binding.postContentEt.getBackground()).getBitmap(),
+                    ((BitmapDrawable)binding.postContentLayout.getBackground()).getBitmap(),
                     url -> {
                         if (url == null){
                             onCreatePostFailed(null);
