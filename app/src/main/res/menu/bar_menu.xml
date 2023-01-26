@@ -7,7 +7,7 @@
         android:title="User Settings" />
 
     <item
-        android:id="@+id/userProfileFragment"
-        android:icon="@drawable/baseline_self_improvement_24"
-        android:title="Profile" />
+        android:id="@+id/createPostFragment"
+        android:icon="@drawable/baseline_post_add_24"
+        android:title="Create Post" />
 </menu>
