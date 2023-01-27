@@ -1,15 +1,8 @@
 package com.example.secret.model;
 
 import android.graphics.Bitmap;
-import android.os.Handler;
-import android.os.Looper;
-
-import androidx.core.os.HandlerCompat;
 
 import com.example.secret.interfaces.Listener;
-
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 public class UsersModel {
     private static final UsersModel _instance = new UsersModel();
@@ -50,6 +43,11 @@ public class UsersModel {
 
     public void signOut() {
         firebaseModel.signOut();
+    }
+
+    public void checkForNicknameExistence(String nickname, Listener<Boolean> onCheckSuccess, Listener<Exception> onCheckFailed) {
+        firebaseModel.checkForNicknameExistence(nickname, onCheckSuccess, onCheckFailed);
+
     }
 }
 
