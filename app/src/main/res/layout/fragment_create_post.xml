@@ -63,6 +63,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:backgroundTint="@android:color/holo_blue_light"/>
+    <Button
+        android:id="@+id/editRandomPostButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit random post instead"
+        app:layout_constraintTop_toBottomOf="@+id/publishButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:backgroundTint="@android:color/holo_blue_light"/>
     <ProgressBar
         android:id="@+id/publishPostProgressBar"
         android:layout_width="100dp"

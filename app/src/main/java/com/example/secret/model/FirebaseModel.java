@@ -154,12 +154,24 @@ public class FirebaseModel {
     public void getPost(String postId, Listener<Map<String, Object>> successListener, Listener<Void> failedListener) {
         db.collection(Post.COLLECTION).document(postId).get()
                 .addOnSuccessListener(t -> {
-                    if (t.exists()){
+                    if (t.exists()) {
                         successListener.onComplete(t.getData());
                         return;
                     }
                     failedListener.onComplete(null);
                 })
-                .addOnFailureListener(t->failedListener.onComplete(null));
+                .addOnFailureListener(t -> failedListener.onComplete(null));
+    }
+
+    public void getRandomPost(String userId, Listener<Map<String, Object>> successListener, Listener<Void> failedListener) {
+        db.collection(Post.COLLECTION).whereEqualTo(Post.USER_ID, userId).get()
+                .addOnSuccessListener(t -> {
+                    if (t.isEmpty()) {
+                        failedListener.onComplete(null);
+                        return;
+                    }
+                    successListener.onComplete(t.getDocuments().get(0).getData());
+                })
+                .addOnFailureListener(t -> failedListener.onComplete(null));
     }
 }

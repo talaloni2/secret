@@ -35,4 +35,14 @@ public class PostsModel {
         };
         firebaseModel.getPost(postId, modelSuccessListener, failListener);
     }
+
+    // TODO: this is a placeholder until user's posts list is created
+    public void getRandomPost(String userId, Listener<Post> successListener, Listener<Void> failListener) {
+        Listener<Map<String, Object>> modelSuccessListener = result -> {
+            Post p = Post.fromJson(result);
+            // TODO: set in localdb
+            successListener.onComplete(p);
+        };
+        firebaseModel.getRandomPost(userId, modelSuccessListener, failListener);
+    }
 }
