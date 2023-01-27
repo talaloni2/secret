@@ -26,6 +26,7 @@ import com.example.secret.databinding.FragmentSignUpBinding;
 import com.example.secret.interfaces.Listener;
 import com.example.secret.model.User;
 import com.example.secret.model.UsersModel;
+import com.example.secret.utls.UserValidator;
 import com.example.secret.viewmodel.UsersViewModel;
 
 import java.util.Optional;
@@ -171,7 +172,6 @@ public class SignUpFragment extends Fragment {
 
         boolean isEmailValid = Pattern.compile(regexPattern).matcher(user.email).matches();
         boolean isPasswordValid = Pattern.compile(passwordAtLeast8WithOneCharOneNum).matcher(password).matches();
-        boolean isNicknameValid = user.nickname != null && user.nickname.length() > 5; //TODO: add validation for unique nickname
 
         if (!isEmailValid) {
             invalid.onComplete("Email is invalid");
@@ -181,21 +181,8 @@ public class SignUpFragment extends Fragment {
             invalid.onComplete("Password must contain 8 characters, with one letter and one number");
             return;
         }
-        if (!isNicknameValid) {
-            invalid.onComplete("Nickname is too short");
-            return;
-        }
 
-        UsersModel.instance().checkForNicknameExistence(user.getNickname(), user.getId(), isExists->{
-            if (isExists){
-                invalid.onComplete("Nickname already exists");
-                return;
-            }
-            valid.onComplete(null);
-        }, err->{
-            Log.e("REGISTER", "Error while checking for nickname uniqueness", err);
-            invalid.onComplete("An error occurred, try again later");
-        });
+        UserValidator.validateNickname(user.getNickname(), user.getId(), valid, invalid);
     }
 
     private void navigateToFeed(View view) {

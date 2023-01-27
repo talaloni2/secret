@@ -18,6 +18,7 @@ import com.example.secret.databinding.FragmentUserSettingsBinding;
 import com.example.secret.interfaces.Listener;
 import com.example.secret.model.User;
 import com.example.secret.model.UsersModel;
+import com.example.secret.utls.UserValidator;
 import com.example.secret.viewmodel.UsersViewModel;
 import com.squareup.picasso.Picasso;
 
@@ -81,7 +82,7 @@ public class UserSettingsFragment extends Fragment {
         currentUser.setMaxDaysBackPosts(binding.maxDaysBackPicker.getValue());
         currentUser.setNickname(binding.nicknameEt.getText().toString());
 
-        validateUser(currentUser,
+        UserValidator.validateNickname(currentUser.getNickname(), currentUser.getId(),
                 this::onUpdateProfileUserValidated,
                 validationError -> {
                     makeProgressBarInVisible();
@@ -142,19 +143,7 @@ public class UserSettingsFragment extends Fragment {
     }
 
     private void validateUser(User user, Listener<Void> valid, Listener<String> invalid) {
-        if (user.getNickname().length() <= 5) {
-            invalid.onComplete("Nickname is too short");
-        }
-        UsersModel.instance().checkForNicknameExistence(user.getNickname(), user.getId(), isExists->{
-            if (isExists){
-                invalid.onComplete("Nickname is already taken");
-                return;
-            }
-            valid.onComplete(null);
-        }, err->{
-            Log.e("UserSettings", "Error while checking for nickname uniqueness", err);
-            invalid.onComplete("An error occurred, try again later");
-        });
+
     }
 
     private void performUpdateUserWithAvatar(Listener<Void> createUserSuccessListener, Listener<Void> createUserFailListener) {
