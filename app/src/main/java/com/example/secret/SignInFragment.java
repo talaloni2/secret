@@ -17,11 +17,13 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
+import androidx.room.util.StringUtil;
 
 import com.example.secret.databinding.FragmentSignInBinding;
 import com.example.secret.interfaces.Listener;
 import com.example.secret.model.UsersModel;
 import com.example.secret.viewmodel.UsersViewModel;
+import com.google.common.base.Strings;
 
 public class SignInFragment extends Fragment {
 
@@ -74,6 +76,11 @@ public class SignInFragment extends Fragment {
             binding.signInProgressBar.setVisibility(View.INVISIBLE);
             Toast.makeText(getActivity(), "Email or password are incorrect", Toast.LENGTH_SHORT).show();
         };
+
+        if (Strings.isNullOrEmpty(email) || Strings.isNullOrEmpty(password)){
+            signInFailed.onComplete(null);
+            return;
+        }
 
         UsersModel.instance().signIn(email, password, signInSuccess, signInFailed);
     }

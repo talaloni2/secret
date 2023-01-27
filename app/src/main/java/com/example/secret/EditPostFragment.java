@@ -155,9 +155,14 @@ public class EditPostFragment extends Fragment {
     }
 
     private void onPublishClick(View view) {
+        String postContent = binding.postContentEt.getText().toString();
+        if (Strings.isNullOrEmpty(postContent) || postContent.length() < 5){
+            Toast.makeText(getActivity(), "Post content too short", Toast.LENGTH_SHORT).show();
+            return;
+        }
         makeProgressBarVisible();
         Post currentlyEditedPost = PostsViewModel.instance().getCurrentPost();
-        currentlyEditedPost.setContent(binding.postContentEt.getText().toString());
+        currentlyEditedPost.setContent(postContent);
         currentlyEditedPost.setAnonymous(binding.anonymousCbx.isChecked());
 
         if (isBackgroundSelected) {

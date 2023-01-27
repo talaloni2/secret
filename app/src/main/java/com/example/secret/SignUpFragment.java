@@ -97,16 +97,24 @@ public class SignUpFragment extends Fragment {
     }
 
     private void performRegister(View view) {
-        binding.cancelBtn.setClickable(false);
-        binding.registerBtn.setClickable(false);
+        setButtonsClickable(false);
         binding.registerProgressBar.setVisibility(View.VISIBLE);
         User user = composeUser();
         String password = binding.passwordEt.getText().toString();
 
         validateUser(user, password,
                 valid -> onUserValid(view, user, password),
-                validationError -> Toast.makeText(getActivity(), validationError, Toast.LENGTH_SHORT).show()
+                validationError -> {
+                    Toast.makeText(getActivity(), validationError, Toast.LENGTH_SHORT).show();
+                    setButtonsClickable(true);
+                    binding.registerProgressBar.setVisibility(View.INVISIBLE);
+                }
         );
+    }
+
+    private void setButtonsClickable(boolean isClickable){
+        binding.cancelBtn.setClickable(isClickable);
+        binding.registerBtn.setClickable(isClickable);
     }
 
     private void onUserValid(View view, User user, String password) {
@@ -115,11 +123,13 @@ public class SignUpFragment extends Fragment {
                     success -> {
                         binding.registerProgressBar.setVisibility(View.INVISIBLE);
                         Toast.makeText(getActivity(), "Registered successfully", Toast.LENGTH_SHORT).show();
+                        setButtonsClickable(true);
                         navigateToFeed(view);
                     },
                     fail -> {
                         binding.registerProgressBar.setVisibility(View.INVISIBLE);
                         Toast.makeText(getActivity(), "Sign in with your new credentials", Toast.LENGTH_SHORT).show();
+                        setButtonsClickable(true);
                     }
             );
         };
@@ -158,18 +168,22 @@ public class SignUpFragment extends Fragment {
         String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
                 + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
         String passwordAtLeast8WithOneCharOneNum = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$";
+
         boolean isEmailValid = Pattern.compile(regexPattern).matcher(user.email).matches();
         boolean isPasswordValid = Pattern.compile(passwordAtLeast8WithOneCharOneNum).matcher(password).matches();
-        boolean isNicknameValid = user.nickname.length() > 5; //TODO: add validation for unique nickname
+        boolean isNicknameValid = user.nickname != null && user.nickname.length() > 5; //TODO: add validation for unique nickname
 
         if (!isEmailValid) {
             invalid.onComplete("Email is invalid");
+            return;
         }
         if (!isPasswordValid) {
             invalid.onComplete("Password must contain 8 characters, with one letter and one number");
+            return;
         }
         if (!isNicknameValid) {
             invalid.onComplete("Nickname is either invalid or already used");
+            return;
         }
         valid.onComplete(null);
     }
