@@ -143,9 +143,18 @@ public class UserSettingsFragment extends Fragment {
 
     private void validateUser(User user, Listener<Void> valid, Listener<String> invalid) {
         if (user.getNickname().length() <= 5) {
-            invalid.onComplete("Nickname is either invalid or already taken");
+            invalid.onComplete("Nickname is too short");
         }
-        valid.onComplete(null);
+        UsersModel.instance().checkForNicknameExistence(user.getNickname(), user.getId(), isExists->{
+            if (isExists){
+                invalid.onComplete("Nickname is already taken");
+                return;
+            }
+            valid.onComplete(null);
+        }, err->{
+            Log.e("UserSettings", "Error while checking for nickname uniqueness", err);
+            invalid.onComplete("An error occurred, try again later");
+        });
     }
 
     private void performUpdateUserWithAvatar(Listener<Void> createUserSuccessListener, Listener<Void> createUserFailListener) {

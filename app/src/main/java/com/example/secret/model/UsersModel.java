@@ -45,8 +45,8 @@ public class UsersModel {
         firebaseModel.signOut();
     }
 
-    public void checkForNicknameExistence(String nickname, Listener<Boolean> onCheckSuccess, Listener<Exception> onCheckFailed) {
-        firebaseModel.checkForNicknameExistence(nickname, onCheckSuccess, onCheckFailed);
+    public void checkForNicknameExistence(String nickname, String userId, Listener<Boolean> onCheckSuccess, Listener<Exception> onCheckFailed) {
+        firebaseModel.checkForNicknameExistence(nickname, userId, onCheckSuccess, onCheckFailed);
 
     }
 }

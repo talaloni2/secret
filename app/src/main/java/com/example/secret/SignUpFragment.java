@@ -186,7 +186,7 @@ public class SignUpFragment extends Fragment {
             return;
         }
 
-        UsersModel.instance().checkForNicknameExistence(user.getNickname(), isExists->{
+        UsersModel.instance().checkForNicknameExistence(user.getNickname(), user.getId(), isExists->{
             if (isExists){
                 invalid.onComplete("Nickname already exists");
                 return;
