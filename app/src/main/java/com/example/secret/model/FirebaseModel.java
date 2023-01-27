@@ -18,6 +18,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class FirebaseModel {
     private FirebaseFirestore db;
@@ -148,5 +149,29 @@ public class FirebaseModel {
                     Log.e("SetPost", "Could not set Post");
                     failListener.onComplete(null);
                 });
+    }
+
+    public void getPost(String postId, Listener<Map<String, Object>> successListener, Listener<Void> failedListener) {
+        db.collection(Post.COLLECTION).document(postId).get()
+                .addOnSuccessListener(t -> {
+                    if (t.exists()) {
+                        successListener.onComplete(t.getData());
+                        return;
+                    }
+                    failedListener.onComplete(null);
+                })
+                .addOnFailureListener(t -> failedListener.onComplete(null));
+    }
+
+    public void getRandomPost(String userId, Listener<Map<String, Object>> successListener, Listener<Void> failedListener) {
+        db.collection(Post.COLLECTION).whereEqualTo(Post.USER_ID, userId).get()
+                .addOnSuccessListener(t -> {
+                    if (t.isEmpty()) {
+                        failedListener.onComplete(null);
+                        return;
+                    }
+                    successListener.onComplete(t.getDocuments().get(0).getData());
+                })
+                .addOnFailureListener(t -> failedListener.onComplete(null));
     }
 }
