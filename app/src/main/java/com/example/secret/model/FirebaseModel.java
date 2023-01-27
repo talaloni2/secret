@@ -174,4 +174,10 @@ public class FirebaseModel {
                 })
                 .addOnFailureListener(t -> failedListener.onComplete(null));
     }
+
+    public void checkForNicknameExistence(String nickname, String userId, Listener<Boolean> onCheckSuccess, Listener<Exception> onCheckFailed) {
+        db.collection(User.COLLECTION).whereEqualTo(User.NICKNAME, nickname).whereNotEqualTo(User.ID, userId).limit(1).get()
+                .addOnSuccessListener(t-> onCheckSuccess.onComplete(!t.isEmpty()))
+                .addOnFailureListener(onCheckFailed::onComplete);
+    }
 }

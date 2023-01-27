@@ -182,10 +182,20 @@ public class SignUpFragment extends Fragment {
             return;
         }
         if (!isNicknameValid) {
-            invalid.onComplete("Nickname is either invalid or already used");
+            invalid.onComplete("Nickname is too short");
             return;
         }
-        valid.onComplete(null);
+
+        UsersModel.instance().checkForNicknameExistence(user.getNickname(), user.getId(), isExists->{
+            if (isExists){
+                invalid.onComplete("Nickname already exists");
+                return;
+            }
+            valid.onComplete(null);
+        }, err->{
+            Log.e("REGISTER", "Error while checking for nickname uniqueness", err);
+            invalid.onComplete("An error occurred, try again later");
+        });
     }
 
     private void navigateToFeed(View view) {
