@@ -19,6 +19,7 @@ import com.example.secret.model.PostsModel;
 import com.example.secret.model.User;
 import com.example.secret.viewmodel.UsersViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.common.base.Strings;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -101,6 +102,10 @@ public class CreatePostFragment extends Fragment {
 
     private void onPublishClick(View view) {
         String postContent = binding.postContentEt.getText().toString();
+        if (Strings.isNullOrEmpty(postContent) || postContent.length() < 5){
+            Toast.makeText(getActivity(), "Post content too short", Toast.LENGTH_SHORT).show();
+            return;
+        }
         makeProgressBarVisible();
         boolean isAnonymous = binding.anonymousCbx.isChecked();
 
