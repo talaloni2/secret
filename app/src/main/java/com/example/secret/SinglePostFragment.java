@@ -11,12 +11,15 @@ import androidx.navigation.Navigation;
 
 import com.example.secret.databinding.FragmentSinglePostBinding;
 import com.example.secret.model.CommentsModel;
+import com.example.secret.model.PostsModel;
 import com.example.secret.model.User;
 import com.example.secret.viewmodel.PostsViewModel;
 import com.example.secret.viewmodel.UsersViewModel;
 import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class SinglePostFragment extends Fragment {
 
@@ -92,7 +95,10 @@ public class SinglePostFragment extends Fragment {
     }
 
     private void onRetrievePostFailed() {
-        Toast.makeText(getActivity(), "Cannot get post.", Toast.LENGTH_SHORT).show();
-        Navigation.findNavController(binding.getRoot()).navigate(EditPostFragmentDirections.actionEditPostFragmentToUserSettingsFragment());
+        Toast.makeText(getActivity(), "Post was deleted.", Toast.LENGTH_SHORT).show();
+        Executors.newSingleThreadExecutor().execute(() -> {
+            PostsModel.instance().deletePost(postId);
+        });
+        Navigation.findNavController(binding.getRoot()).navigate(SinglePostFragmentDirections.actionSinglePostFragmentToPostsListFragment());
     }
 }

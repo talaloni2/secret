@@ -28,4 +28,7 @@ public interface CommentDao {
 
     @Delete
     void delete(Comment comment);
+
+    @Query("delete from Comment where postId = :postId")
+    void deletePostComments(String postId);
 }

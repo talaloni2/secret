@@ -66,6 +66,10 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostViewHolder> {
     List<Post> posts;
     Map<String, List<Comment>> postsLatestComments;
 
+    public List<Post> getPosts() {
+        return this.posts;
+    }
+
     public void setPosts(List<Post> posts) {
         this.posts = posts;
         notifyDataSetChanged();
