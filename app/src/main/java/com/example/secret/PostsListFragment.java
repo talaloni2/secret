@@ -55,6 +55,19 @@ public class PostsListFragment extends Fragment {
 ////                Navigation.findNavController(view).navigate(action);
 //        });
 
+        binding.btnLoadMore.setOnClickListener(v -> {
+            binding.progressBar.setVisibility(View.VISIBLE);
+            PostsModel.instance().loadMorePosts().observe(getViewLifecycleOwner(), postsList -> {
+                adapter.setPosts(postsList);
+                CommentsModel.instance().refreshLatestComments();
+                for (Post post : postsList) {
+                    viewModel.getPostLatestComments(post.id).observe(getViewLifecycleOwner(),
+                            commentList -> adapter.setPostLatestComments(post.id, commentList));
+                }
+                binding.progressBar.setVisibility(View.INVISIBLE);
+            });
+        });
+
         binding.progressBar.setVisibility(View.GONE);
 
         viewModel.getPosts().observe(getViewLifecycleOwner(), postsList -> {
