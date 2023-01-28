@@ -77,5 +77,20 @@
         android:name="com.example.secret.PostsListFragment"
         android:label="Feed"
         tools:layout="@layout/fragment_posts_list">
+        <action
+            android:id="@+id/action_postsListFragment_to_singlePostFragment"
+            app:destination="@id/singlePostFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/singlePostFragment"
+        android:name="com.example.secret.SinglePostFragment"
+        android:label="View a Secret"
+        tools:layout="@layout/fragment_single_post" >
+        <action
+            android:id="@+id/action_singlePostFragment_to_editPostFragment"
+            app:destination="@id/editPostFragment" />
+        <argument
+            android:name="postId"
+            app:argType="string" />
     </fragment>
 </navigation>

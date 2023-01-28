@@ -2,6 +2,7 @@ package com.example.secret;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.secret.databinding.FragmentPostsListBinding;
@@ -48,12 +51,15 @@ public class PostsListFragment extends Fragment {
         adapter = new PostRecyclerAdapter(getLayoutInflater(), viewModel.getPosts().getValue(), postsLatestCommentsData);
         binding.recyclerView.setAdapter(adapter);
 
-//        adapter.setOnItemClickListener(pos -> {
-//            Log.d("TAG", "Row was clicked " + pos);
-//            Post st = viewModel.getData().getValue().get(pos);
-////                NavDirections.ActionPostsListFragmentToBlueFragment action = PostsListFragmentDirections.actionPostsListFragmentToBlueFragment(st.name);
-////                Navigation.findNavController(view).navigate(action);
-//        });
+        adapter.setOnItemClickListener(pos -> {
+            Log.d("TAG", "Row was clicked " + pos);
+            Post post = viewModel.getPosts().getValue().get(pos);
+            PostsListFragmentDirections.ActionPostsListFragmentToSinglePostFragment action =
+                    PostsListFragmentDirections.actionPostsListFragmentToSinglePostFragment(
+                            post.id
+                    );
+            Navigation.findNavController(view).navigate(action);
+        });
 
         binding.btnLoadMore.setOnClickListener(v -> {
             binding.progressBar.setVisibility(View.VISIBLE);
