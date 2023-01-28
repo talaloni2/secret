@@ -13,4 +13,29 @@ public class Image {
 
     @ColumnInfo(name = "content", typeAffinity = ColumnInfo.BLOB)
     byte[] content;
+
+    public Image(@NonNull String url, byte[] content) {
+        this.url = url;
+        this.content = content;
+    }
+
+    public Image() {
+    }
+
+    @NonNull
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(@NonNull String url) {
+        this.url = url;
+    }
+
+    public byte[] getContent() {
+        return content;
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
 }

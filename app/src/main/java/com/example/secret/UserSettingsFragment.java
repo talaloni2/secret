@@ -16,8 +16,10 @@ import android.widget.Toast;
 
 import com.example.secret.databinding.FragmentUserSettingsBinding;
 import com.example.secret.interfaces.Listener;
+import com.example.secret.model.ImageModel;
 import com.example.secret.model.User;
 import com.example.secret.model.UsersModel;
+import com.example.secret.utls.BitmapConverter;
 import com.example.secret.utls.UserValidator;
 import com.example.secret.viewmodel.UsersViewModel;
 import com.squareup.picasso.Picasso;
@@ -98,19 +100,21 @@ public class UserSettingsFragment extends Fragment {
         binding.bioEt.setText(currentUser.bio);
         binding.maxDaysBackPicker.setValue(currentUser.maxDaysBackPosts);
         if (currentUser.getAvatarUrl() != null && currentUser.getAvatarUrl().length() > 5) {
-            Picasso.get().load(currentUser.getAvatarUrl()).placeholder(R.drawable.avatar).into(binding.avatarImg);
+            ImageModel.instance().getImage(currentUser.getAvatarUrl(), R.drawable.avatar, bitmap -> {
+                binding.avatarImg.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
+                makeProgressBarInVisible();
+            }, failReason -> {
+                Toast.makeText(getActivity(), "Cannot load profile image", Toast.LENGTH_SHORT).show();
+                makeProgressBarInVisible();
+            });
         } else {
             binding.avatarImg.setImageResource(R.drawable.avatar);
+            makeProgressBarInVisible();
         }
-        makeProgressBarInVisible();
         setMaxDaysBackPostsPicker(currentUser.maxDaysBackPosts);
-        binding.cameraButton.setOnClickListener(view1 -> {
-            cameraLauncher.launch(null);
-        });
+        binding.cameraButton.setOnClickListener(view1 -> cameraLauncher.launch(null));
 
-        binding.galleryButton.setOnClickListener(view1 -> {
-            galleryLauncher.launch("image/*");
-        });
+        binding.galleryButton.setOnClickListener(view1 -> galleryLauncher.launch("image/*"));
     }
 
     private void makeProgressBarVisible() {
@@ -148,7 +152,7 @@ public class UserSettingsFragment extends Fragment {
 
     private void performUpdateUserWithAvatar(Listener<Void> createUserSuccessListener, Listener<Void> createUserFailListener) {
         if (isAvatarChanged) {
-            Bitmap bitmap = ((BitmapDrawable) binding.avatarImg.getDrawable()).getBitmap();
+            Bitmap bitmap = BitmapConverter.fromDrawable(binding.avatarImg.getDrawable());
             UsersModel.instance().uploadImage(UUID.randomUUID().toString(), bitmap, url -> {
                 if (url == null) {
                     Log.w(TAG, "Could not save image. The older image will remain");

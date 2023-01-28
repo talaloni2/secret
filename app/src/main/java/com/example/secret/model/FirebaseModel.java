@@ -81,12 +81,9 @@ public class FirebaseModel {
                 });
     }
 
-    void uploadImage(String name, Bitmap bitmap, Listener<String> listener) {
+    void uploadImage(String name, byte[] data, Listener<String> listener) {
         StorageReference storageRef = storage.getReference();
         StorageReference imagesRef = storageRef.child("images/" + name + ".jpg");
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
 
         UploadTask uploadTask = imagesRef.putBytes(data);
         uploadTask

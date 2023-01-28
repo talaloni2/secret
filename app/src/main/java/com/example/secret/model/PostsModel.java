@@ -37,7 +37,7 @@ public class PostsModel {
     }
 
     public void uploadBackground(String name, Bitmap bitmap, Listener<String> listener) {
-        firebaseModel.uploadImage(name, bitmap, listener);
+        ImageModel.instance().uploadImage(name, bitmap, listener);
     }
 
     public void uploadPost(Post post, Listener<Void> successListener, Listener<Void> failListener) {

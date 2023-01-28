@@ -14,15 +14,16 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.secret.databinding.FragmentEditPostBinding;
+import com.example.secret.model.ImageModel;
 import com.example.secret.model.Post;
 import com.example.secret.model.User;
+import com.example.secret.utls.BitmapConverter;
 import com.example.secret.utls.CameraActivityResultCallback;
 import com.example.secret.utls.GalleryActivityResultCallback;
 import com.example.secret.utls.PostPublisher;
 import com.example.secret.utls.RandomBackgroundClickedListener;
 import com.example.secret.viewmodel.PostsViewModel;
 import com.example.secret.viewmodel.UsersViewModel;
-import com.squareup.picasso.Picasso;
 
 public class EditPostFragment extends Fragment {
 
@@ -97,24 +98,26 @@ public class EditPostFragment extends Fragment {
     private void initializeComponentsWithPostData() {
         makeProgressBarVisible();
         if (postId == null) {
-            onRetrievePostFailed();
+            onRetrievePostFailed("Post is not defined");
             return;
         }
         PostsViewModel.instance().getPost(postId,
                 post -> {
                     binding.anonymousCbx.setChecked(post.getAnonymous());
                     binding.postContentEt.setText(post.getContent());
-                    Picasso.get().load(post.getBackgroundUrl()).into(binding.postImage);
+                    ImageModel.instance().getImage(post.getBackgroundUrl(), bitmap -> {
+                        binding.postImage.setImageDrawable(new BitmapDrawable(getResources(), bitmap));
+                    }, this::onRetrievePostFailed);
                     makeProgressBarInvisible();
                 },
-                fail -> onRetrievePostFailed());
+                fail -> onRetrievePostFailed("Failed getting post"));
 
     }
 
-    private void onRetrievePostFailed() {
-        Toast.makeText(getActivity(), "Cannot get post.", Toast.LENGTH_SHORT).show();
+    private void onRetrievePostFailed(String reason) {
+        Toast.makeText(getActivity(), reason, Toast.LENGTH_SHORT).show();
         makeProgressBarInvisible();
-        Navigation.findNavController(binding.getRoot()).navigate(EditPostFragmentDirections.actionEditPostFragmentToUserSettingsFragment());
+        Navigation.findNavController(binding.getRoot()).popBackStack();
     }
 
     private void makeProgressBarInvisible() {
@@ -133,7 +136,7 @@ public class EditPostFragment extends Fragment {
         currentlyEditedPost.setAnonymous(binding.anonymousCbx.isChecked());
         Bitmap newImage = null;
         if (isBackgroundSelected) {
-            newImage = ((BitmapDrawable) binding.postImage.getDrawable()).getBitmap();
+            newImage = BitmapConverter.fromDrawable(binding.postImage.getDrawable());
         }
 
         new PostPublisher(

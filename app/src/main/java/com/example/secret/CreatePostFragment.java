@@ -17,6 +17,7 @@ import com.example.secret.databinding.FragmentCreatePostBinding;
 import com.example.secret.model.Post;
 import com.example.secret.model.PostsModel;
 import com.example.secret.model.User;
+import com.example.secret.utls.BitmapConverter;
 import com.example.secret.utls.CameraActivityResultCallback;
 import com.example.secret.utls.GalleryActivityResultCallback;
 import com.example.secret.utls.PostPublisher;
@@ -107,7 +108,7 @@ public class CreatePostFragment extends Fragment {
         boolean isAnonymous = binding.anonymousCbx.isChecked();
         Bitmap image = null;
         if(isBackgroundSelected){
-            image = ((BitmapDrawable) binding.postImage.getDrawable()).getBitmap();
+            image = BitmapConverter.fromDrawable(binding.postImage.getDrawable());
         }
         new PostPublisher(
                 success -> {

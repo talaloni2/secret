@@ -17,7 +17,7 @@ public class UsersModel {
     }
 
     public void uploadImage(String name, Bitmap bitmap, Listener<String> listener) {
-        firebaseModel.uploadImage(name, bitmap, listener);
+        ImageModel.instance().uploadImage(name, bitmap, listener);
     }
 
     public boolean isUserConnected() {

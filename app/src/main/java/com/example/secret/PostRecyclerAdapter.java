@@ -1,9 +1,10 @@
 package com.example.secret;
 
+import android.graphics.drawable.BitmapDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,10 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.secret.model.Comment;
+import com.example.secret.model.ImageModel;
 import com.example.secret.model.Post;
-import com.squareup.picasso.Picasso;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +48,11 @@ class PostViewHolder extends RecyclerView.ViewHolder {
         comment1Tv.setText(latestComments.size() > 0 ? latestComments.get(0).content : "");
         comment2Tv.setText(latestComments.size() > 1 ? latestComments.get(1).content : "");
         if (post.getBackgroundUrl() != null && post.getBackgroundUrl().length() > 5) {
-            Picasso.get().load(post.getBackgroundUrl()).placeholder(R.drawable.sharing_secret_image).into(backgroundImage);
+            ImageModel.instance().getImage(post.getBackgroundUrl(), bitmap -> {
+                backgroundImage.setImageDrawable(new BitmapDrawable(itemView.getResources(), bitmap));
+            }, failReason -> {
+                Log.w("PostRecyclerAdapter", String.format("Not viewing post %s due to %s", post.id, failReason));
+            });
         } else {
             backgroundImage.setImageResource(R.drawable.sharing_secret_image);
         }

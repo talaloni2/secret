@@ -26,6 +26,7 @@ import com.example.secret.databinding.FragmentSignUpBinding;
 import com.example.secret.interfaces.Listener;
 import com.example.secret.model.User;
 import com.example.secret.model.UsersModel;
+import com.example.secret.utls.BitmapConverter;
 import com.example.secret.utls.UserValidator;
 import com.example.secret.viewmodel.UsersViewModel;
 
@@ -145,7 +146,7 @@ public class SignUpFragment extends Fragment {
 
     private void performRegisterWithAvatar(User user, String password, Listener<Void> createUserSuccessListener, Listener<Void> createUserFailListener) {
         if (isAvatarSelected) {
-            Bitmap bitmap = ((BitmapDrawable) binding.avatarImg.getDrawable()).getBitmap();
+            Bitmap bitmap = BitmapConverter.fromDrawable(binding.avatarImg.getDrawable());
             UsersModel.instance().uploadImage(UUID.randomUUID().toString(), bitmap, url -> {
                 if (url == null) {
                     Log.w("REGISTER", "Could not save image. User will be created without one");

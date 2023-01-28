@@ -42,7 +42,8 @@ public class MainActivity extends AppCompatActivity {
                 Arrays.asList(
                         R.id.signInFragment,
                         R.id.userSettingsFragment,
-                        R.id.initFragment
+                        R.id.initFragment,
+                        R.id.postsListFragment
                 )
         );
     }
