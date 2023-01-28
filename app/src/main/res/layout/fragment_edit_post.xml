@@ -4,8 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".EditPostFragment"
-    android:background="@drawable/sharing_secret_image">
+    tools:context=".EditPostFragment">
+
+    <ImageView
+        android:id="@+id/postImage"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/postContentLayout"
+        app:srcCompat="@drawable/sharing_secret_image"/>
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -14,6 +22,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="10dp"
         android:id="@+id/postContentLayout">
 
@@ -26,6 +35,14 @@
             android:lines="11"/>
     </com.google.android.material.textfield.TextInputLayout>
 
+    <ImageButton
+        android:id="@+id/randomBackgroundButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/baseline_photo_random_24"
+        app:layout_constraintBottom_toBottomOf="@+id/cameraButton"
+        app:layout_constraintEnd_toStartOf="@+id/galleryButton"
+        android:backgroundTint="@android:color/holo_blue_light"/>
     <ImageButton
         android:id="@+id/galleryButton"
         android:layout_width="wrap_content"
@@ -59,14 +76,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Update"
-        app:layout_constraintTop_toBottomOf="@+id/postContentLayout"
+        app:layout_constraintTop_toBottomOf="@+id/cameraButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:backgroundTint="@android:color/holo_blue_light"/>
     <ProgressBar
         android:id="@+id/publishPostProgressBar"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         app:layout_constraintTop_toBottomOf="@+id/publishButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
