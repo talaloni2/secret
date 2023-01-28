@@ -22,7 +22,4 @@ public interface PostDao {
 
     @Delete
     void delete(Post post);
-
-    @Query("DELETE FROM Post")
-    void deleteAll();
 }
