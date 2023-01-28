@@ -55,7 +55,7 @@ public class CreatePostFragment extends Fragment {
         cameraLauncher = registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), result -> {
             if (result != null) {
                 BitmapDrawable background = new BitmapDrawable(getResources(), result);
-                binding.postContentLayout.setBackground(background);
+                binding.postImage.setImageDrawable(background);
                 isBackgroundSelected = true;
             }
         });
@@ -63,7 +63,7 @@ public class CreatePostFragment extends Fragment {
             if (result != null) {
                 try {
                     InputStream is = getContext().getContentResolver().openInputStream(result);
-                    binding.postContentLayout.setBackground(Drawable.createFromStream(is, result.toString()));
+                    binding.postImage.setImageDrawable(Drawable.createFromStream(is, result.toString()));
                     isBackgroundSelected = true;
                 } catch (FileNotFoundException e) {
                     Toast.makeText(getActivity(), "Could not select image", Toast.LENGTH_SHORT).show();
@@ -77,7 +77,6 @@ public class CreatePostFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentCreatePostBinding.inflate(inflater, container, false);
-        binding.postContentEt.setTextColor(Color.WHITE);
         makeProgressBarInvisible();
 
         binding.cameraButton.setOnClickListener(view1 -> cameraLauncher.launch(null));
@@ -106,23 +105,8 @@ public class CreatePostFragment extends Fragment {
         makeProgressBarVisible();
         ExternalBackgroundModel.getInstance().getRandomBackground(
                 backgroundMeta -> {
-                    Picasso.get().load(backgroundMeta.getUrls().getThumb()).into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            binding.postContentLayout.setBackground(new BitmapDrawable(getResources(), bitmap));
-                            isBackgroundSelected = true;
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                            Toast.makeText(getActivity(), "Try again later", Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            Log.d("GetRandomPostBackground", "Preparing load");
-                        }
-                    });
+                    Picasso.get().load(backgroundMeta.getUrls().getThumb()).placeholder(R.drawable.sharing_secret_image).into(binding.postImage);
+                    isBackgroundSelected = true;
                     makeProgressBarInvisible();
                 },
                 fail -> {
@@ -153,7 +137,7 @@ public class CreatePostFragment extends Fragment {
         if (isBackgroundSelected) {
             PostsModel.instance().uploadBackground(
                     UUID.randomUUID().toString(),
-                    ((BitmapDrawable) binding.postContentLayout.getBackground()).getBitmap(),
+                    ((BitmapDrawable) binding.postImage.getDrawable()).getBitmap(),
                     url -> {
                         if (url == null) {
                             onCreatePostFailed(null);

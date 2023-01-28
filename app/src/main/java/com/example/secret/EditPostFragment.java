@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.secret.databinding.FragmentEditPostBinding;
+import com.example.secret.model.ExternalBackgroundModel;
 import com.example.secret.model.Post;
 import com.example.secret.model.PostsModel;
 import com.example.secret.model.User;
@@ -68,7 +69,7 @@ public class EditPostFragment extends Fragment {
         cameraLauncher = registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), result -> {
             if (result != null) {
                 BitmapDrawable background = new BitmapDrawable(getResources(), result);
-                binding.postContentLayout.setBackground(background);
+                binding.postImage.setImageDrawable(background);
                 isBackgroundSelected = true;
             }
         });
@@ -76,7 +77,7 @@ public class EditPostFragment extends Fragment {
             if (result != null) {
                 try {
                     InputStream is = getContext().getContentResolver().openInputStream(result);
-                    binding.postContentLayout.setBackground(Drawable.createFromStream(is, result.toString()));
+                    binding.postImage.setImageDrawable(Drawable.createFromStream(is, result.toString()));
                     isBackgroundSelected = true;
                 } catch (FileNotFoundException e) {
                     Toast.makeText(getActivity(), "Could not select image", Toast.LENGTH_SHORT).show();
@@ -98,13 +99,14 @@ public class EditPostFragment extends Fragment {
 
         binding.galleryButton.setOnClickListener(view1 -> galleryLauncher.launch("image/*"));
 
+        binding.randomBackgroundButton.setOnClickListener(this::onRandomBackgroundRequested);
+
         binding.publishButton.setOnClickListener(this::onPublishClick);
 
         return binding.getRoot();
     }
 
     private void initializeComponentsWithPostData() {
-        Resources resources = getResources();
         makeProgressBarVisible();
         if (postId == null) {
             onRetrievePostFailed();
@@ -114,28 +116,26 @@ public class EditPostFragment extends Fragment {
                 post -> {
                     binding.anonymousCbx.setChecked(post.getAnonymous());
                     binding.postContentEt.setText(post.getContent());
-
-                    Picasso.get().load(currentUser.getAvatarUrl()).placeholder(R.drawable.avatar).into(new Target() {
-                        @Override
-                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                            binding.postContentLayout.setBackground(new BitmapDrawable(resources, bitmap));
-                        }
-
-                        @Override
-                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
-                            Log.e("GetPostBackground", "Could not load image", e);
-                        }
-
-                        @Override
-                        public void onPrepareLoad(Drawable placeHolderDrawable) {
-                            Log.d("GetPostBackground", "Preparing load");
-                        }
-                    });
-
+                    Picasso.get().load(post.getBackgroundUrl()).into(binding.postImage);
                     makeProgressBarInvisible();
                 },
                 fail -> onRetrievePostFailed());
 
+    }
+
+    private void onRandomBackgroundRequested(View view) {
+        makeProgressBarVisible();
+        ExternalBackgroundModel.getInstance().getRandomBackground(
+                backgroundMeta -> {
+                    Picasso.get().load(backgroundMeta.getUrls().getThumb()).placeholder(R.drawable.sharing_secret_image).into(binding.postImage);
+                    isBackgroundSelected = true;
+                    makeProgressBarInvisible();
+                },
+                fail -> {
+                    makeProgressBarInvisible();
+                    Toast.makeText(getActivity(), "Try again later", Toast.LENGTH_SHORT).show();
+                }
+        );
     }
 
     private void onRetrievePostFailed() {
@@ -166,7 +166,7 @@ public class EditPostFragment extends Fragment {
         if (isBackgroundSelected) {
             PostsModel.instance().uploadBackground(
                     UUID.randomUUID().toString(),
-                    ((BitmapDrawable) binding.postContentLayout.getBackground()).getBitmap(),
+                    ((BitmapDrawable) binding.postImage.getDrawable()).getBitmap(),
                     url -> {
                         if (url == null) {
                             onEditPostFailed(null);
