@@ -77,9 +77,7 @@ public class PostsListFragment extends Fragment {
     }
 
     void reloadData() {
-        binding.progressBar.setVisibility(View.VISIBLE);
         PostsModel.instance().refreshLatestPosts();
         CommentsModel.instance().refreshLatestComments();
-        binding.progressBar.setVisibility(View.INVISIBLE);
     }
 }
