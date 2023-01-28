@@ -2,12 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/userSettingsFragment"
-        android:icon="@drawable/ic_baseline_settings_24"
-        android:title="User Settings" />
+        android:id="@+id/postsListFragment"
+        android:icon="@drawable/baseline_feed_24"
+        android:title="Feed"
+        />
 
     <item
         android:id="@+id/createPostFragment"
         android:icon="@drawable/baseline_post_add_24"
         android:title="Create Post" />
+
+    <item
+        android:id="@+id/userSettingsFragment"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="User Settings" />
+
 </menu>

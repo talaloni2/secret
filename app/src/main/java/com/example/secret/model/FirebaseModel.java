@@ -152,7 +152,7 @@ public class FirebaseModel {
     }
 
     public void setComment(Comment comment, Listener<Void> successListener, Listener<Void> failListener) {
-        db.collection(Post.COLLECTION).document(comment.getId()).set(comment.toJson())
+        db.collection(Comment.COLLECTION).document(comment.getId()).set(comment.toJson())
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         successListener.onComplete(null);
