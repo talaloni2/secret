@@ -16,6 +16,8 @@ import java.util.concurrent.Executors;
 public class PostsModel {
     private static final PostsModel _instance = new PostsModel();
 
+    private int postslimit = 5;
+
     private Executor executor = Executors.newSingleThreadExecutor();
     private FirebaseModel firebaseModel = new FirebaseModel();
     private AppLocalDbRepository localDb = AppLocalDb.getAppDb();
@@ -55,7 +57,7 @@ public class PostsModel {
 
     public LiveData<List<Post>> getAllPosts() {
         if (postList == null) {
-            postList = localDb.postDao().getAll();
+            postList = localDb.postDao().getAllLimited(this.postslimit);
             refreshLatestPosts();
         }
         return postList;

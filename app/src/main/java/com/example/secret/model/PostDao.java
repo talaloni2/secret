@@ -14,6 +14,9 @@ public interface PostDao {
     @Query("select * from Post order by lastUpdated desc")
     LiveData<List<Post>> getAll();
 
+    @Query("select * from Post order by lastUpdated desc limit :limit")
+    LiveData<List<Post>> getAllLimited(int limit);
+
     @Query("select * from Post where id = :postId")
     Post getPostById(String postId);
 
