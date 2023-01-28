@@ -6,9 +6,10 @@ import androidx.room.RoomDatabase;
 
 import com.example.secret.MyApplication;
 
-@Database(entities = {User.class}, version = 80)
+@Database(entities = {User.class, Image.class}, version = 80)
 abstract class AppLocalDbRepository extends RoomDatabase {
     public abstract UserDao  userDao();
+    public abstract ImageDao imageDao();
 }
 
 public class AppLocalDb{
