@@ -1,12 +1,8 @@
 package com.example.secret;
 
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,21 +14,17 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.secret.databinding.FragmentCreatePostBinding;
-import com.example.secret.model.ExternalBackgroundModel;
 import com.example.secret.model.Post;
 import com.example.secret.model.PostsModel;
 import com.example.secret.model.User;
+import com.example.secret.utls.CameraActivityResultCallback;
+import com.example.secret.utls.GalleryActivityResultCallback;
+import com.example.secret.utls.PostPublisher;
+import com.example.secret.utls.RandomBackgroundClickedListener;
 import com.example.secret.viewmodel.UsersViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.common.base.Strings;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.UUID;
-
-import javax.annotation.Nullable;
 
 public class CreatePostFragment extends Fragment {
     FragmentCreatePostBinding binding;
@@ -45,31 +37,16 @@ public class CreatePostFragment extends Fragment {
 
     boolean isBackgroundSelected;
 
+    public void setBackgroundSelected(boolean backgroundSelected) {
+        isBackgroundSelected = backgroundSelected;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         navigationView = getActivity().findViewById(R.id.main_bottomNavigationView);
         navigationView.setVisibility(View.VISIBLE);
         currentUser = UsersViewModel.instance().getCurrentUser();
-
-        cameraLauncher = registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), result -> {
-            if (result != null) {
-                BitmapDrawable background = new BitmapDrawable(getResources(), result);
-                binding.postImage.setImageDrawable(background);
-                isBackgroundSelected = true;
-            }
-        });
-        galleryLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
-            if (result != null) {
-                try {
-                    InputStream is = getContext().getContentResolver().openInputStream(result);
-                    binding.postImage.setImageDrawable(Drawable.createFromStream(is, result.toString()));
-                    isBackgroundSelected = true;
-                } catch (FileNotFoundException e) {
-                    Toast.makeText(getActivity(), "Could not select image", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
     @Override
@@ -77,15 +54,30 @@ public class CreatePostFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentCreatePostBinding.inflate(inflater, container, false);
+
+        cameraLauncher = registerForActivityResult(
+                new ActivityResultContracts.TakePicturePreview(),
+                new CameraActivityResultCallback(this::setBackgroundSelected, binding.postImage, getResources())
+        );
+        galleryLauncher = registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                new GalleryActivityResultCallback(getActivity(), binding.postImage, this::setBackgroundSelected)
+        );
+
         makeProgressBarInvisible();
 
         binding.cameraButton.setOnClickListener(view1 -> cameraLauncher.launch(null));
 
         binding.galleryButton.setOnClickListener(view1 -> galleryLauncher.launch("image/*"));
 
-        binding.randomBackgroundButton.setOnClickListener(this::onRandomBackgroundRequested);
+        binding.randomBackgroundButton.setOnClickListener(
+                new RandomBackgroundClickedListener(
+                        getActivity(), binding.publishPostProgressBar,
+                        binding.postImage, this::setBackgroundSelected
+                ));
 
         binding.publishButton.setOnClickListener(this::onPublishClick);
+        //TODO: placeholder to enable post editing, will be removed so there is no need to handle now.
         binding.editRandomPostButton.setOnClickListener(view -> {
             PostsModel.instance().getRandomPost(
                     UsersViewModel.instance().getCurrentUser().getId(),
@@ -101,21 +93,6 @@ public class CreatePostFragment extends Fragment {
         return binding.getRoot();
     }
 
-    private void onRandomBackgroundRequested(View view) {
-        makeProgressBarVisible();
-        ExternalBackgroundModel.getInstance().getRandomBackground(
-                backgroundMeta -> {
-                    Picasso.get().load(backgroundMeta.getUrls().getThumb()).placeholder(R.drawable.sharing_secret_image).into(binding.postImage);
-                    isBackgroundSelected = true;
-                    makeProgressBarInvisible();
-                },
-                fail -> {
-                    makeProgressBarInvisible();
-                    Toast.makeText(getActivity(), "Try again later", Toast.LENGTH_SHORT).show();
-                }
-        );
-    }
-
     private void makeProgressBarInvisible() {
         binding.publishPostProgressBar.setVisibility(View.INVISIBLE);
     }
@@ -125,47 +102,25 @@ public class CreatePostFragment extends Fragment {
     }
 
     private void onPublishClick(View view) {
-        String postContent = binding.postContentEt.getText().toString();
-        if (Strings.isNullOrEmpty(postContent) || postContent.length() < 5){
-            Toast.makeText(getActivity(), "Post content too short", Toast.LENGTH_SHORT).show();
-            return;
-        }
         makeProgressBarVisible();
+        String postContent = binding.postContentEt.getText().toString();
         boolean isAnonymous = binding.anonymousCbx.isChecked();
-
-
-        if (isBackgroundSelected) {
-            PostsModel.instance().uploadBackground(
-                    UUID.randomUUID().toString(),
-                    ((BitmapDrawable) binding.postImage.getDrawable()).getBitmap(),
-                    url -> {
-                        if (url == null) {
-                            onCreatePostFailed(null);
-                            return;
-                        }
-                        createPostWithNullableAvatar(view, postContent, isAnonymous, url);
-                    }
-            );
+        Bitmap image = null;
+        if(isBackgroundSelected){
+            image = ((BitmapDrawable) binding.postImage.getDrawable()).getBitmap();
         }
-        else {
-            createPostWithNullableAvatar(view, postContent, isAnonymous, null);
-        }
-    }
-
-    private void createPostWithNullableAvatar(View view, String postContent, boolean isAnonymous, @Nullable String url) {
-        Post p = new Post(UUID.randomUUID().toString(), postContent, isAnonymous, url, currentUser.getId());
-        PostsModel.instance().uploadPost(
-                p,
+        new PostPublisher(
                 success -> {
                     makeProgressBarInvisible();
                     Toast.makeText(getActivity(), "Created post successfully", Toast.LENGTH_SHORT).show();
                     Navigation.findNavController(view).popBackStack();
                 },
-                this::onCreatePostFailed);
+                this::onCreatePostFailed
+        ).publish(new Post(UUID.randomUUID().toString(), postContent, isAnonymous, null, currentUser.getId()), image);
     }
 
-    private void onCreatePostFailed(Void unused) {
+    private void onCreatePostFailed(String cause) {
         makeProgressBarInvisible();
-        Toast.makeText(getActivity(), "Please try again", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), cause, Toast.LENGTH_SHORT).show();
     }
 }

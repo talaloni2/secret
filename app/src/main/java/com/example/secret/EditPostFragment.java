@@ -1,11 +1,8 @@
 package com.example.secret;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,21 +14,15 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.secret.databinding.FragmentEditPostBinding;
-import com.example.secret.model.ExternalBackgroundModel;
 import com.example.secret.model.Post;
-import com.example.secret.model.PostsModel;
 import com.example.secret.model.User;
+import com.example.secret.utls.CameraActivityResultCallback;
+import com.example.secret.utls.GalleryActivityResultCallback;
+import com.example.secret.utls.PostPublisher;
+import com.example.secret.utls.RandomBackgroundClickedListener;
 import com.example.secret.viewmodel.PostsViewModel;
 import com.example.secret.viewmodel.UsersViewModel;
-import com.google.common.base.Strings;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.UUID;
-
-import javax.annotation.Nullable;
 
 public class EditPostFragment extends Fragment {
 
@@ -46,6 +37,10 @@ public class EditPostFragment extends Fragment {
     String postId;
 
     public static final String POST_ID_PARAM_NAME = "POST_ID";
+
+    public void setBackgroundSelected(boolean backgroundSelected) {
+        isBackgroundSelected = backgroundSelected;
+    }
 
     public static EditPostFragment newInstance(String postId) {
         EditPostFragment frag = new EditPostFragment();
@@ -65,25 +60,6 @@ public class EditPostFragment extends Fragment {
         if (arguments != null) {
             this.postId = arguments.getString(POST_ID_PARAM_NAME);
         }
-
-        cameraLauncher = registerForActivityResult(new ActivityResultContracts.TakePicturePreview(), result -> {
-            if (result != null) {
-                BitmapDrawable background = new BitmapDrawable(getResources(), result);
-                binding.postImage.setImageDrawable(background);
-                isBackgroundSelected = true;
-            }
-        });
-        galleryLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
-            if (result != null) {
-                try {
-                    InputStream is = getContext().getContentResolver().openInputStream(result);
-                    binding.postImage.setImageDrawable(Drawable.createFromStream(is, result.toString()));
-                    isBackgroundSelected = true;
-                } catch (FileNotFoundException e) {
-                    Toast.makeText(getActivity(), "Could not select image", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
     }
 
     @Override
@@ -91,6 +67,14 @@ public class EditPostFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentEditPostBinding.inflate(inflater, container, false);
+        cameraLauncher = registerForActivityResult(
+                new ActivityResultContracts.TakePicturePreview(),
+                new CameraActivityResultCallback(this::setBackgroundSelected, binding.postImage, getResources())
+        );
+        galleryLauncher = registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                new GalleryActivityResultCallback(getActivity(), binding.postImage, this::setBackgroundSelected)
+        );
         this.postId = EditPostFragmentArgs.fromBundle(getArguments()).getPostId();
         makeProgressBarInvisible();
         initializeComponentsWithPostData();
@@ -99,7 +83,11 @@ public class EditPostFragment extends Fragment {
 
         binding.galleryButton.setOnClickListener(view1 -> galleryLauncher.launch("image/*"));
 
-        binding.randomBackgroundButton.setOnClickListener(this::onRandomBackgroundRequested);
+        binding.randomBackgroundButton.setOnClickListener(
+                new RandomBackgroundClickedListener(
+                        getActivity(), binding.publishPostProgressBar,
+                        binding.postImage, this::setBackgroundSelected
+                ));
 
         binding.publishButton.setOnClickListener(this::onPublishClick);
 
@@ -123,21 +111,6 @@ public class EditPostFragment extends Fragment {
 
     }
 
-    private void onRandomBackgroundRequested(View view) {
-        makeProgressBarVisible();
-        ExternalBackgroundModel.getInstance().getRandomBackground(
-                backgroundMeta -> {
-                    Picasso.get().load(backgroundMeta.getUrls().getThumb()).placeholder(R.drawable.sharing_secret_image).into(binding.postImage);
-                    isBackgroundSelected = true;
-                    makeProgressBarInvisible();
-                },
-                fail -> {
-                    makeProgressBarInvisible();
-                    Toast.makeText(getActivity(), "Try again later", Toast.LENGTH_SHORT).show();
-                }
-        );
-    }
-
     private void onRetrievePostFailed() {
         Toast.makeText(getActivity(), "Cannot get post.", Toast.LENGTH_SHORT).show();
         makeProgressBarInvisible();
@@ -153,51 +126,28 @@ public class EditPostFragment extends Fragment {
     }
 
     private void onPublishClick(View view) {
-        String postContent = binding.postContentEt.getText().toString();
-        if (Strings.isNullOrEmpty(postContent) || postContent.length() < 5){
-            Toast.makeText(getActivity(), "Post content too short", Toast.LENGTH_SHORT).show();
-            return;
-        }
         makeProgressBarVisible();
+        String postContent = binding.postContentEt.getText().toString();
         Post currentlyEditedPost = PostsViewModel.instance().getCurrentPost();
         currentlyEditedPost.setContent(postContent);
         currentlyEditedPost.setAnonymous(binding.anonymousCbx.isChecked());
-
+        Bitmap newImage = null;
         if (isBackgroundSelected) {
-            PostsModel.instance().uploadBackground(
-                    UUID.randomUUID().toString(),
-                    ((BitmapDrawable) binding.postImage.getDrawable()).getBitmap(),
-                    url -> {
-                        if (url == null) {
-                            onEditPostFailed(null);
-                            return;
-                        }
-                        uploadPostWithBackground(view, currentlyEditedPost, url);
-                    }
-            );
-        }
-        else {
-            uploadPostWithBackground(view, currentlyEditedPost, null);
-        }
-    }
-
-    private void uploadPostWithBackground(View view, Post currentlyEditedPost, @Nullable String backgroundUrl) {
-        if (!Strings.isNullOrEmpty(backgroundUrl)) {
-            currentlyEditedPost.setBackgroundUrl(backgroundUrl);
+            newImage = ((BitmapDrawable) binding.postImage.getDrawable()).getBitmap();
         }
 
-        PostsModel.instance().uploadPost(
-                currentlyEditedPost,
+        new PostPublisher(
                 success -> {
                     makeProgressBarInvisible();
                     Toast.makeText(getActivity(), "Updated post successfully", Toast.LENGTH_SHORT).show();
                     Navigation.findNavController(view).popBackStack(R.id.createPostFragment, true);
                 },
-                this::onEditPostFailed);
+                this::onEditPostFailed
+        ).publish(currentlyEditedPost, newImage);
     }
 
-    private void onEditPostFailed(Void unused) {
+    private void onEditPostFailed(String cause) {
         makeProgressBarInvisible();
-        Toast.makeText(getActivity(), "Please try again", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), cause, Toast.LENGTH_SHORT).show();
     }
 }
