@@ -27,6 +27,15 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <ImageButton
+        android:id="@+id/randomBackgroundButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/baseline_photo_random_24"
+        app:layout_constraintBottom_toBottomOf="@+id/cameraButton"
+        app:layout_constraintEnd_toStartOf="@+id/galleryButton"
+        android:backgroundTint="@android:color/holo_blue_light"/>
+
+    <ImageButton
         android:id="@+id/galleryButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -1,8 +1,12 @@
 package com.example.secret;
 
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +18,15 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.secret.databinding.FragmentCreatePostBinding;
+import com.example.secret.model.ExternalBackgroundModel;
 import com.example.secret.model.Post;
 import com.example.secret.model.PostsModel;
 import com.example.secret.model.User;
 import com.example.secret.viewmodel.UsersViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.common.base.Strings;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -70,11 +77,14 @@ public class CreatePostFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentCreatePostBinding.inflate(inflater, container, false);
+        binding.postContentEt.setTextColor(Color.WHITE);
         makeProgressBarInvisible();
 
         binding.cameraButton.setOnClickListener(view1 -> cameraLauncher.launch(null));
 
         binding.galleryButton.setOnClickListener(view1 -> galleryLauncher.launch("image/*"));
+
+        binding.randomBackgroundButton.setOnClickListener(this::onRandomBackgroundRequested);
 
         binding.publishButton.setOnClickListener(this::onPublishClick);
         binding.editRandomPostButton.setOnClickListener(view -> {
@@ -90,6 +100,36 @@ public class CreatePostFragment extends Fragment {
         });
 
         return binding.getRoot();
+    }
+
+    private void onRandomBackgroundRequested(View view) {
+        makeProgressBarVisible();
+        ExternalBackgroundModel.getInstance().getRandomBackground(
+                backgroundMeta -> {
+                    Picasso.get().load(backgroundMeta.getUrls().getThumb()).into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            binding.postContentLayout.setBackground(new BitmapDrawable(getResources(), bitmap));
+                            isBackgroundSelected = true;
+                        }
+
+                        @Override
+                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                            Toast.makeText(getActivity(), "Try again later", Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                            Log.d("GetRandomPostBackground", "Preparing load");
+                        }
+                    });
+                    makeProgressBarInvisible();
+                },
+                fail -> {
+                    makeProgressBarInvisible();
+                    Toast.makeText(getActivity(), "Try again later", Toast.LENGTH_SHORT).show();
+                }
+        );
     }
 
     private void makeProgressBarInvisible() {
