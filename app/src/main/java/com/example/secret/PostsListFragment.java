@@ -17,6 +17,7 @@ import com.example.secret.model.Comment;
 import com.example.secret.model.CommentsModel;
 import com.example.secret.model.Post;
 import com.example.secret.model.PostsModel;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,11 +28,15 @@ public class PostsListFragment extends Fragment {
     PostRecyclerAdapter adapter;
     PostsListFragmentViewModel viewModel;
 
+    BottomNavigationView navigationView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentPostsListBinding.inflate(inflater, container, false);
+        navigationView = getActivity().findViewById(R.id.main_bottomNavigationView);
+        navigationView.setVisibility(View.VISIBLE);
         View view = binding.getRoot();
 
         binding.recyclerView.setHasFixedSize(true);

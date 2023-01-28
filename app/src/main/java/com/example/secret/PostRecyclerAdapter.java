@@ -48,9 +48,9 @@ class PostViewHolder extends RecyclerView.ViewHolder {
         comment1Tv.setText(latestComments.size() > 0 ? latestComments.get(0).content : "");
         comment2Tv.setText(latestComments.size() > 1 ? latestComments.get(1).content : "");
         if (post.getBackgroundUrl() != null && post.getBackgroundUrl().length() > 5) {
-            Picasso.get().load(post.getBackgroundUrl()).placeholder(R.drawable.avatar).into(backgroundImage);
+            Picasso.get().load(post.getBackgroundUrl()).placeholder(R.drawable.sharing_secret_image).into(backgroundImage);
         } else {
-            backgroundImage.setImageResource(R.drawable.avatar);
+            backgroundImage.setImageResource(R.drawable.sharing_secret_image);
         }
     }
 }
