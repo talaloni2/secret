@@ -16,6 +16,8 @@ import com.example.secret.viewmodel.PostsViewModel;
 import com.example.secret.viewmodel.UsersViewModel;
 import com.squareup.picasso.Picasso;
 
+import java.util.Objects;
+
 public class SinglePostFragment extends Fragment {
 
     FragmentSinglePostBinding binding;
@@ -51,9 +53,18 @@ public class SinglePostFragment extends Fragment {
         // Inflate the layout for this fragment
         binding = FragmentSinglePostBinding.inflate(inflater, container, false);
         this.postId = SinglePostFragmentArgs.fromBundle(getArguments()).getPostId();
+        View view = binding.getRoot();
         initializeComponentsWithPostData();
 
-        return binding.getRoot();
+        binding.singlePostBtnEditPost.setOnClickListener(v -> {
+            SinglePostFragmentDirections.ActionSinglePostFragmentToEditPostFragment action =
+                    SinglePostFragmentDirections.actionSinglePostFragmentToEditPostFragment(
+                            postId
+                    );
+            Navigation.findNavController(view).navigate(action);
+        });
+
+        return view;
     }
 
     private void initializeComponentsWithPostData() {
@@ -68,7 +79,14 @@ public class SinglePostFragment extends Fragment {
                         binding.singlePostComment1.setText(comments.size() > 0 ? comments.get(0).content : "");
                         binding.singlePostComment2.setText(comments.size() > 1 ? comments.get(1).content : "");
                     });
-                    Picasso.get().load(post.getBackgroundUrl()).into(binding.singlePostBackgroundImg);
+                    if (post.getBackgroundUrl() != null && post.getBackgroundUrl().length() > 5) {
+                        Picasso.get().load(post.getBackgroundUrl()).placeholder(R.drawable.sharing_secret_image).into(binding.singlePostBackgroundImg);
+                    } else {
+                        binding.singlePostBackgroundImg.setImageResource(R.drawable.sharing_secret_image);
+                    }
+                    if (Objects.equals(post.userId, currentUser.id)) {
+                        binding.singlePostBtnEditPost.setVisibility(View.VISIBLE);
+                    }
                 },
                 fail -> onRetrievePostFailed());
     }
