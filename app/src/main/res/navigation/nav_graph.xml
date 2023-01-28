@@ -9,7 +9,7 @@
         android:id="@+id/signUpFragment"
         android:name="com.example.secret.SignUpFragment"
         android:label="Sign Up"
-        tools:layout="@layout/fragment_sign_up" >
+        tools:layout="@layout/fragment_sign_up">
         <action
             android:id="@+id/action_signUpFragment_to_userSettingsFragment"
             app:destination="@id/userSettingsFragment" />
@@ -17,7 +17,7 @@
     <fragment
         android:id="@+id/signInFragment"
         android:name="com.example.secret.SignInFragment"
-        android:label="Sign In" >
+        android:label="Sign In">
         <action
             android:id="@+id/action_signInFragment_to_signUpFragment"
             app:destination="@id/signUpFragment" />
@@ -36,8 +36,8 @@
         android:label="Secret"
         tools:layout="@layout/fragment_init" >
         <action
-            android:id="@+id/action_initFragment_to_userSettingsFragment"
-            app:destination="@id/userSettingsFragment" />
+            android:id="@+id/action_initFragment_to_postsListFragment"
+            app:destination="@id/postsListFragment" />
         <action
             android:id="@+id/action_initFragment_to_signInFragment"
             app:destination="@id/signInFragment" />
@@ -72,4 +72,10 @@
             app:argType="string" />
     </fragment>
     <action android:id="@+id/action_global_editPostFragment" app:destination="@id/editPostFragment" />
+    <fragment
+        android:id="@+id/postsListFragment"
+        android:name="com.example.secret.PostsListFragment"
+        android:label="Feed"
+        tools:layout="@layout/fragment_posts_list">
+    </fragment>
 </navigation>

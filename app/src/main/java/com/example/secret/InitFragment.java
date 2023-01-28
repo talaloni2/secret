@@ -47,7 +47,7 @@ public class InitFragment extends Fragment {
     private void setUser(View view) {
         UsersViewModel.instance().setUser(
                 success -> Navigation.findNavController(view).navigate(
-                        InitFragmentDirections.actionInitFragmentToUserSettingsFragment()
+                        InitFragmentDirections.actionInitFragmentToPostsListFragment()
                 ),
                 fail -> {
                     UsersViewModel.instance().signOut();
