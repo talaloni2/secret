@@ -6,12 +6,14 @@ import androidx.room.RoomDatabase;
 
 import com.example.secret.MyApplication;
 
-@Database(entities = {User.class}, version = 80)
+@Database(entities = {User.class, Post.class, Comment.class}, version = 82)
 abstract class AppLocalDbRepository extends RoomDatabase {
-    public abstract UserDao  userDao();
+    public abstract UserDao userDao();
+    public abstract PostDao postDao();
+    public abstract CommentDao commentDao();
 }
 
-public class AppLocalDb{
+public class AppLocalDb {
     static public AppLocalDbRepository getAppDb() {
         return Room.databaseBuilder(MyApplication.getMyContext(),
                         AppLocalDbRepository.class,
@@ -20,6 +22,6 @@ public class AppLocalDb{
                 .build();
     }
 
-    private AppLocalDb(){}
+    private AppLocalDb() {
+    }
 }
-

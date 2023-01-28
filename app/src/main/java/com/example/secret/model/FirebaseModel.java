@@ -139,6 +139,47 @@ public class FirebaseModel {
         auth.signOut();
     }
 
+    public void getComment(String commentId, Listener<Map<String, Object>> successListener, Listener<Void> failedListener) {
+        db.collection(Comment.COLLECTION).document(commentId).get()
+                .addOnSuccessListener(t -> {
+                    if (t.exists()) {
+                        successListener.onComplete(t.getData());
+                        return;
+                    }
+                    failedListener.onComplete(null);
+                })
+                .addOnFailureListener(t -> failedListener.onComplete(null));
+    }
+
+    public void setComment(Comment comment, Listener<Void> successListener, Listener<Void> failListener) {
+        db.collection(Post.COLLECTION).document(comment.getId()).set(comment.toJson())
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        successListener.onComplete(null);
+                        return;
+                    }
+                    Log.e("SetComment", "Could not set Comment");
+                    failListener.onComplete(null);
+                });
+    }
+
+    public void getAllCommentsSince(Long since, Listener<List<Comment>> callback) {
+        db.collection(Comment.COLLECTION)
+                .whereGreaterThanOrEqualTo(Comment.LAST_UPDATED, new Timestamp(since, 0))
+                .get()
+                .addOnCompleteListener(task -> {
+                    List<Comment> comments = new LinkedList<>();
+                    if (task.isSuccessful()) {
+                        QuerySnapshot jsonsList = task.getResult();
+                        for (DocumentSnapshot json : jsonsList) {
+                            Comment comment = Comment.fromJson(json.getData());
+                            comments.add(comment);
+                        }
+                    }
+                    callback.onComplete(comments);
+                });
+    }
+
     public void setPost(Post post, Listener<Void> successListener, Listener<Void> failListener) {
         db.collection(Post.COLLECTION).document(post.getId()).set(post.toJson())
                 .addOnCompleteListener(task -> {
@@ -161,6 +202,23 @@ public class FirebaseModel {
                     failedListener.onComplete(null);
                 })
                 .addOnFailureListener(t -> failedListener.onComplete(null));
+    }
+
+    public void getAllPostsSince(Long since, Listener<List<Post>> callback) {
+        db.collection(Post.COLLECTION)
+                .whereGreaterThanOrEqualTo(Post.LAST_UPDATED, new Timestamp(since, 0))
+                .get()
+                .addOnCompleteListener(task -> {
+                    List<Post> list = new LinkedList<>();
+                    if (task.isSuccessful()) {
+                        QuerySnapshot jsonsList = task.getResult();
+                        for (DocumentSnapshot json : jsonsList) {
+                            Post post = Post.fromJson(json.getData());
+                            list.add(post);
+                        }
+                    }
+                    callback.onComplete(list);
+                });
     }
 
     public void getRandomPost(String userId, Listener<Map<String, Object>> successListener, Listener<Void> failedListener) {
