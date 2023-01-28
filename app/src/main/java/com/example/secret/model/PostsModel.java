@@ -56,37 +56,35 @@ public class PostsModel {
     public LiveData<List<Post>> getAllPosts() {
         if (postList == null) {
             postList = localDb.postDao().getAll();
-            refreshAllPosts();
+            refreshLatestPosts();
         }
         return postList;
     }
 
-    public void refreshAllPosts() {
+    public void refreshLatestPosts() {
         EventPostsListLoadingState.setValue(PostsModel.LoadingState.LOADING);
         // get local last update
         Long localLastUpdate = Post.getLocalLastUpdate();
         // get all updated recorde from firebase since local last update
-        firebaseModel.getAllPostsSince(localLastUpdate, list -> {
-            executor.execute(() -> {
-                Log.d("TAG", " firebase return : " + list.size());
-                Long time = localLastUpdate;
-                for (Post st : list) {
-                    // insert new records into ROOM
-                    localDb.postDao().insertAll(st);
-                    if (time < st.getLastUpdated()) {
-                        time = st.getLastUpdated();
-                    }
+        firebaseModel.getAllPostsSince(localLastUpdate, list -> executor.execute(() -> {
+            Log.d("TAG", " firebase return : " + list.size());
+            Long time = localLastUpdate;
+            for (Post st : list) {
+                // insert new records into ROOM
+                localDb.postDao().insertAll(st);
+                if (time < st.getLastUpdated()) {
+                    time = st.getLastUpdated();
                 }
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                // update local last update
-                Post.setLocalLastUpdate(time);
-                EventPostsListLoadingState.postValue(PostsModel.LoadingState.NOT_LOADING);
-            });
-        });
+            }
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // update local last update
+            Post.setLocalLastUpdate(time);
+            EventPostsListLoadingState.postValue(LoadingState.NOT_LOADING);
+        }));
     }
 
     // TODO: this is a placeholder until user's posts list is created

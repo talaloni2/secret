@@ -16,19 +16,23 @@ import java.util.Objects;
 public class PostsListFragmentViewModel extends ViewModel {
     private LiveData<List<Post>> posts = PostsModel.instance().getAllPosts();
 
-    LiveData<List<Post>> getPosts(){
+    LiveData<List<Post>> getPosts() {
         return posts;
     }
 
-    Map<String, List<Comment>> getPostsLatestComments(){
-        Map<String, List<Comment>> postsLatestComments = new HashMap<>();
+    Map<String, LiveData<List<Comment>>> getPostsLatestComments() {
+        Map<String, LiveData<List<Comment>>> postsLatestComments = new HashMap<>();
         List<Post> allPosts = this.posts.getValue();
         if (allPosts == null) {
             return postsLatestComments;
         }
         for (Post post : allPosts) {
-            postsLatestComments.put(post.id, CommentsModel.instance().getCommentsByPostIdLimited(post.id).getValue());
+            postsLatestComments.put(post.id, CommentsModel.instance().getCommentsByPostIdLimited(post.id));
         }
         return postsLatestComments;
+    }
+
+    LiveData<List<Comment>> getPostLatestComments(String postId) {
+        return CommentsModel.instance().getCommentsByPostIdLimited(postId);
     }
 }

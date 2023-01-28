@@ -14,6 +14,8 @@ import com.example.secret.model.Comment;
 import com.example.secret.model.Post;
 import com.squareup.picasso.Picasso;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +25,8 @@ class PostViewHolder extends RecyclerView.ViewHolder {
     Map<String, List<Comment>> postsLatestComments;
     ImageView backgroundImage;
     TextView contentTv;
+    TextView comment1Tv;
+    TextView comment2Tv;
 
     public PostViewHolder(@NonNull View itemView, PostRecyclerAdapter.OnItemClickListener listener, List<Post> posts, Map<String, List<Comment>> postsLatestComments) {
         super(itemView);
@@ -30,6 +34,8 @@ class PostViewHolder extends RecyclerView.ViewHolder {
         this.postsLatestComments = postsLatestComments;
         backgroundImage = itemView.findViewById(R.id.list_item_background_img);
         contentTv = itemView.findViewById(R.id.list_item_content_tv);
+        comment1Tv = itemView.findViewById(R.id.list_item_comment1);
+        comment2Tv = itemView.findViewById(R.id.list_item_comment2);
         itemView.setOnClickListener(view -> {
             int pos = getAdapterPosition();
             listener.onItemClick(pos);
@@ -37,7 +43,10 @@ class PostViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Post post, int pos) {
+        List<Comment> latestComments = this.postsLatestComments.getOrDefault(post.id, Collections.emptyList());
         contentTv.setText(post.content);
+        comment1Tv.setText(latestComments.size() > 0 ? latestComments.get(0).content : "");
+        comment2Tv.setText(latestComments.size() > 1 ? latestComments.get(1).content : "");
         if (post.getBackgroundUrl() != null && post.getBackgroundUrl().length() > 5) {
             Picasso.get().load(post.getBackgroundUrl()).placeholder(R.drawable.avatar).into(backgroundImage);
         } else {
@@ -59,6 +68,11 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostViewHolder> {
 
     public void setPosts(List<Post> posts) {
         this.posts = posts;
+        notifyDataSetChanged();
+    }
+
+    public void setPostLatestComments(String postId, List<Comment> latestComments) {
+        this.postsLatestComments.put(postId, latestComments);
         notifyDataSetChanged();
     }
 

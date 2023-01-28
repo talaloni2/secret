@@ -1,6 +1,5 @@
 package com.example.secret.model;
 
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
@@ -8,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.secret.interfaces.Listener;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -22,7 +22,7 @@ public class CommentsModel {
 
     final public MutableLiveData<CommentsModel.LoadingState> eventCommentsListLoadingState = new MutableLiveData<>(CommentsModel.LoadingState.NOT_LOADING);
     private LiveData<List<Comment>> commentsList;
-    private Map<String, LiveData<List<Comment>>> postsLatestComments;
+    private Map<String, LiveData<List<Comment>>> postsLatestComments = new HashMap<>();
 
     private CommentsModel() {
 
@@ -52,27 +52,27 @@ public class CommentsModel {
     public LiveData<List<Comment>> getAllComments() {
         if (commentsList == null) {
             commentsList = localDb.commentDao().getAll();
-            refreshAllComments();
+            refreshLatestComments();
         }
         return commentsList;
     }
 
     public LiveData<List<Comment>> getCommentsByPostIdLimited(String postId) {
-        if (!postsLatestComments.containsKey(postId)) {
-            refreshAllComments();
-            postsLatestComments.put(postId, localDb.commentDao().getCommentsByPostIdLimited(postId, 2));
+        if (!this.postsLatestComments.containsKey(postId)) {
+            this.postsLatestComments.put(postId, localDb.commentDao().getCommentsByPostIdLimited(postId, 2));
+            refreshLatestComments();
         }
-        return commentsList;
+        return this.postsLatestComments.get(postId);
     }
 
-    public void refreshAllComments() {
+    public void refreshLatestComments() {
         eventCommentsListLoadingState.setValue(CommentsModel.LoadingState.LOADING);
         // get local last update
         Long localLastUpdate = Comment.getLocalLastUpdate();
         // get all updated recorde from firebase since local last update
         firebaseModel.getAllCommentsSince(localLastUpdate, list -> {
             executor.execute(() -> {
-                Log.d("TAG", " firebase return : " + list.size());
+                Log.d("refresh all comments", " firebase return : " + list.size());
                 Long time = localLastUpdate;
                 for (Comment comment : list) {
                     // insert new records into ROOM
