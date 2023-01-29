@@ -99,6 +99,6 @@ public class SinglePostFragment extends Fragment {
         Executors.newSingleThreadExecutor().execute(() -> {
             PostsModel.instance().deletePost(postId);
         });
-        Navigation.findNavController(binding.getRoot()).navigate(SinglePostFragmentDirections.actionSinglePostFragmentToPostsListFragment());
+        Navigation.findNavController(binding.getRoot()).popBackStack();
     }
 }
