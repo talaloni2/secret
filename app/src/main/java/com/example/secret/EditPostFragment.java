@@ -104,7 +104,7 @@ public class EditPostFragment extends Fragment {
                 post -> {
                     binding.anonymousCbx.setChecked(post.getAnonymous());
                     binding.postContentEt.setText(post.getContent());
-                    Picasso.get().load(post.getBackgroundUrl()).into(binding.postImage);
+                    Picasso.get().load(post.getBackgroundUrl()).placeholder(R.drawable.sharing_secret_image).into(binding.postImage);
                     makeProgressBarInvisible();
                 },
                 fail -> onRetrievePostFailed());
