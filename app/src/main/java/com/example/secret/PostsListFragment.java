@@ -53,7 +53,7 @@ public class PostsListFragment extends Fragment {
 
         adapter.setOnItemClickListener(pos -> {
             Log.d("TAG", "Row was clicked " + pos);
-            Post post = viewModel.getPosts().getValue().get(pos);
+            Post post = adapter.getPosts().get(pos);
             PostsListFragmentDirections.ActionPostsListFragmentToSinglePostFragment action =
                     PostsListFragmentDirections.actionPostsListFragmentToSinglePostFragment(
                             post.id

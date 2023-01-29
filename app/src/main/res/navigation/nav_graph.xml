@@ -89,6 +89,9 @@
         <action
             android:id="@+id/action_singlePostFragment_to_editPostFragment"
             app:destination="@id/editPostFragment" />
+        <action
+            android:id="@+id/action_singlePostFragment_to_postsListFragment"
+            app:destination="@id/postsListFragment" />
         <argument
             android:name="postId"
             app:argType="string" />

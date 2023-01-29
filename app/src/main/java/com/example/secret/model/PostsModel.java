@@ -64,6 +64,11 @@ public class PostsModel {
         return postList;
     }
 
+    public void deletePost(String postId) {
+        localDb.commentDao().deletePostComments(postId);
+        localDb.postDao().deletePost(postId);
+    }
+
     public LiveData<List<Post>> loadMorePosts() {
         this.postsLimit += this.postsLimitIncrement;
         postList = localDb.postDao().getAllLimited(this.postsLimit);
