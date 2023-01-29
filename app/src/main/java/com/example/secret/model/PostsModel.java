@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.secret.interfaces.Listener;
+import com.example.secret.viewmodel.UsersViewModel;
 
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ public class PostsModel {
 
     final public MutableLiveData<PostsModel.LoadingState> EventPostsListLoadingState = new MutableLiveData<PostsModel.LoadingState>(PostsModel.LoadingState.NOT_LOADING);
     private LiveData<List<Post>> postList;
+    private User currentUser = UsersViewModel.instance().getCurrentUser();
 
     private PostsModel() {
 
@@ -58,7 +60,9 @@ public class PostsModel {
 
     public LiveData<List<Post>> getAllPosts() {
         if (postList == null) {
-            postList = localDb.postDao().getAllLimited(this.postsLimit);
+            postList = localDb.postDao().getAllLimited(
+                    "-" + currentUser.maxDaysBackPosts + " days", this.postsLimit
+            );
             refreshLatestPosts();
         }
         return postList;
@@ -71,7 +75,9 @@ public class PostsModel {
 
     public LiveData<List<Post>> loadMorePosts() {
         this.postsLimit += this.postsLimitIncrement;
-        postList = localDb.postDao().getAllLimited(this.postsLimit);
+        postList = localDb.postDao().getAllLimited(
+                "-" + currentUser.maxDaysBackPosts + " days", this.postsLimit
+        );
         return postList;
     }
 
