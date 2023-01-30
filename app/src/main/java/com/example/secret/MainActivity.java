@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             navController.popBackStack();
         }else if (item.getItemId() == R.id.signInFragment) {
             UsersViewModel.instance().signOut();
-            navController.navigate(R.id.signInFragment);
+            navController.popBackStack(R.id.initFragment, false);
             return super.onOptionsItemSelected(item);
         }
         return NavigationUI.onNavDestinationSelected(item, navController);
