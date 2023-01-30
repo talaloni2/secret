@@ -15,8 +15,8 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.secret.databinding.FragmentSinglePostBinding;
+import com.example.secret.model.Comment;
 import com.example.secret.model.CommentsModel;
-import com.example.secret.model.Post;
 import com.example.secret.model.PostsModel;
 import com.example.secret.model.User;
 import com.example.secret.viewmodel.PostsViewModel;
@@ -25,7 +25,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
-import java.util.concurrent.Executor;
+import java.util.UUID;
 import java.util.concurrent.Executors;
 
 public class SinglePostFragment extends Fragment {
@@ -75,6 +75,16 @@ public class SinglePostFragment extends Fragment {
                             postId
                     );
             Navigation.findNavController(view).navigate(action);
+        });
+
+        binding.singlePostCommentBtn.setOnClickListener(v -> {
+            Comment comment = new Comment(
+                    UUID.randomUUID().toString(),
+                    binding.singlePostCommentEt.getText().toString(),
+                    currentUser.id,
+                    postId
+            );
+            adapter.addComment(comment, unused -> SinglePostFragment.this.reloadData(), fail -> Toast.makeText(getActivity(), "Can't add comment", Toast.LENGTH_SHORT));
         });
 
         viewModel.getPostComments(postId).observe(getViewLifecycleOwner(), commentsList ->

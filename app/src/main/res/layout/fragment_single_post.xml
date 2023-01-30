@@ -41,10 +41,10 @@
         android:id="@+id/commentsSwipeRefresh"
         android:layout_weight = "8.5"
         android:layout_width="0dp"
-        android:layout_height="300dp"
+        android:layout_height="200dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/single_post_btn_edit_post"
+        app:layout_constraintBottom_toTopOf="@+id/addCommentLinearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -62,6 +62,44 @@
             app:layout_constraintTop_toBottomOf="parent" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <LinearLayout
+        android:id="@+id/addCommentLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        app:layout_constraintTop_toBottomOf="@+id/commentsSwipeRefresh"
+        app:layout_constraintBottom_toTopOf="@+id/single_post_btn_edit_post"
+        android:orientation="horizontal">
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_weight = "7"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            app:startIconDrawable="@drawable/ic_baseline_comment_24">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/single_post_comment_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Share your thoughts" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/single_post_comment_btn"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_weight = "3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Comment"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"/>
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/single_post_btn_edit_post"
         android:layout_width="wrap_content"
@@ -71,6 +109,6 @@
         android:layout_marginBottom="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/commentsSwipeRefresh"
+        app:layout_constraintTop_toBottomOf="@+id/addCommentLinearLayout"
         android:visibility="invisible"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

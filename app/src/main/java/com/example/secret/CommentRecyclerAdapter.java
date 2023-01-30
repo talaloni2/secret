@@ -8,7 +8,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.secret.interfaces.Listener;
 import com.example.secret.model.Comment;
+import com.example.secret.model.CommentsModel;
 
 import java.util.List;
 
@@ -49,6 +51,10 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentViewHold
     public void setComments(List<Comment> comments) {
         this.comments = comments;
         notifyDataSetChanged();
+    }
+
+    public void addComment(Comment comment, Listener<Void> successListener, Listener<Void> failListener) {
+        CommentsModel.instance().uploadComment(comment, successListener, failListener);
     }
 
     public CommentRecyclerAdapter(LayoutInflater inflater, List<Comment> comments) {

@@ -27,12 +27,12 @@ public class PostsListFragmentViewModel extends ViewModel {
             return postsLatestComments;
         }
         for (Post post : allPosts) {
-            postsLatestComments.put(post.id, CommentsModel.instance().getCommentsByPostIdLimited(post.id));
+            postsLatestComments.put(post.id, CommentsModel.instance().getCommentsByPostId(post.id));
         }
         return postsLatestComments;
     }
 
     LiveData<List<Comment>> getPostLatestComments(String postId) {
-        return CommentsModel.instance().getCommentsByPostIdLimited(postId);
+        return CommentsModel.instance().getCommentsByPostId(postId);
     }
 }
