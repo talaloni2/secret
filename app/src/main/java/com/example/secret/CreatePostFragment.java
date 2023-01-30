@@ -77,18 +77,6 @@ public class CreatePostFragment extends Fragment {
                 ));
 
         binding.publishButton.setOnClickListener(this::onPublishClick);
-        //TODO: placeholder to enable post editing, will be removed so there is no need to handle now.
-        binding.editRandomPostButton.setOnClickListener(view -> {
-            PostsModel.instance().getRandomPost(
-                    UsersViewModel.instance().getCurrentUser().getId(),
-                    post ->
-                            Navigation.findNavController(view).navigate(
-                                    CreatePostFragmentDirections.actionCreatePostFragmentToEditPostFragment(
-                                            post.getId()
-                                    )
-                            ),
-                    fail -> Toast.makeText(getActivity(), "Cannot load random post", Toast.LENGTH_SHORT).show());
-        });
 
         return binding.getRoot();
     }

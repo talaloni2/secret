@@ -3,12 +3,15 @@ package com.example.secret.model;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import androidx.core.os.HandlerCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.secret.MyApplication;
 import com.example.secret.interfaces.Listener;
 import com.example.secret.viewmodel.UsersViewModel;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -46,16 +49,32 @@ public class PostsModel {
     }
 
     public void uploadPost(Post post, Listener<Void> successListener, Listener<Void> failListener) {
-        firebaseModel.setPost(post, successListener, failListener);
+        Listener<Void> modelSuccessListener = success -> {
+            executor.execute(() -> {
+                MyApplication.mainThreadHandler.post(()->{
+                    refreshLatestPosts();
+                    successListener.onComplete(null);
+                });
+
+            });
+        };
+        firebaseModel.setPost(post, modelSuccessListener, failListener);
     }
 
     public void getPost(String postId, Listener<Post> successListener, Listener<Void> failListener) {
         Listener<Map<String, Object>> modelSuccessListener = result -> {
             Post p = Post.fromJson(result);
-            // TODO: set in localdb
+            executor.execute(() -> localDb.postDao().insertAll(p));
             successListener.onComplete(p);
         };
-        firebaseModel.getPost(postId, modelSuccessListener, failListener);
+        executor.execute(() -> {
+            Post existingPost = localDb.postDao().getPostById(postId);
+            if (existingPost != null){
+                MyApplication.mainThreadHandler.post(() ->successListener.onComplete(existingPost));
+                return;
+            }
+            MyApplication.mainThreadHandler.post(() -> firebaseModel.getPost(postId, modelSuccessListener, failListener));
+        });
     }
 
     public LiveData<List<Post>> getAllPosts() {
@@ -105,15 +124,5 @@ public class PostsModel {
             Post.setLocalLastUpdate(time);
             EventPostsListLoadingState.postValue(LoadingState.NOT_LOADING);
         }));
-    }
-
-    // TODO: this is a placeholder until user's posts list is created
-    public void getRandomPost(String userId, Listener<Post> successListener, Listener<Void> failListener) {
-        Listener<Map<String, Object>> modelSuccessListener = result -> {
-            Post p = Post.fromJson(result);
-            // TODO: set in localdb
-            successListener.onComplete(p);
-        };
-        firebaseModel.getRandomPost(userId, modelSuccessListener, failListener);
     }
 }

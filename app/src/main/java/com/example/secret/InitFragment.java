@@ -36,7 +36,7 @@ public class InitFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         if (UsersModel.instance().isUserConnected()) {
-            setUser(view);
+            reloadUser(view);
             return;
         }
         Navigation.findNavController(view).navigate(
@@ -44,8 +44,8 @@ public class InitFragment extends Fragment {
         );
     }
 
-    private void setUser(View view) {
-        UsersViewModel.instance().setUser(
+    private void reloadUser(View view) {
+        UsersViewModel.instance().reloadUser(
                 success -> Navigation.findNavController(view).navigate(
                         InitFragmentDirections.actionInitFragmentToPostsListFragment()
                 ),

@@ -140,7 +140,7 @@ public class EditPostFragment extends Fragment {
                 success -> {
                     makeProgressBarInvisible();
                     Toast.makeText(getActivity(), "Updated post successfully", Toast.LENGTH_SHORT).show();
-                    Navigation.findNavController(view).popBackStack(R.id.createPostFragment, true);
+                    Navigation.findNavController(view).popBackStack();
                 },
                 this::onEditPostFailed
         ).publish(currentlyEditedPost, newImage);
