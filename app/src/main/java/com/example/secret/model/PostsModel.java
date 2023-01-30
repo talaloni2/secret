@@ -11,6 +11,7 @@ import com.example.secret.MyApplication;
 import com.example.secret.interfaces.Listener;
 import com.example.secret.viewmodel.UsersViewModel;
 
+import java.util.HashMap;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ public class PostsModel {
 
     final public MutableLiveData<PostsModel.LoadingState> EventPostsListLoadingState = new MutableLiveData<PostsModel.LoadingState>(PostsModel.LoadingState.NOT_LOADING);
     private LiveData<List<Post>> postList;
+    private Map<String, LiveData<List<Post>>> usersPostsList = new HashMap<>();
     private User currentUser = UsersViewModel.instance().getCurrentUser();
 
     private PostsModel() {
@@ -87,6 +89,16 @@ public class PostsModel {
         return postList;
     }
 
+    public LiveData<List<Post>> getUserPosts(String userId) {
+        if (!usersPostsList.containsKey(userId)) {
+            usersPostsList.put(userId, localDb.postDao().getUserPostsLimited(
+                    userId, "-" + currentUser.maxDaysBackPosts + " days", this.postsLimit
+            ));
+            refreshLatestPosts();
+        }
+        return usersPostsList.get(userId);
+    }
+
     public void deletePost(String postId) {
         localDb.commentDao().deletePostComments(postId);
         localDb.postDao().deletePost(postId);
@@ -98,6 +110,14 @@ public class PostsModel {
                 "-" + currentUser.maxDaysBackPosts + " days", this.postsLimit
         );
         return postList;
+    }
+
+    public LiveData<List<Post>> loadMoreUserPosts(String userId) {
+        this.postsLimit += this.postsLimitIncrement;
+        usersPostsList.put(userId, localDb.postDao().getUserPostsLimited(
+                userId, "-" + currentUser.maxDaysBackPosts + " days", this.postsLimit
+        ));
+        return usersPostsList.get(userId);
     }
 
     public void refreshLatestPosts() {

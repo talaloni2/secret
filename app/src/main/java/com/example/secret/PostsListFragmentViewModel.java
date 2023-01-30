@@ -20,6 +20,10 @@ public class PostsListFragmentViewModel extends ViewModel {
         return posts;
     }
 
+    LiveData<List<Post>> getUserPosts(String userId) {
+        return PostsModel.instance().getUserPosts(userId);
+    }
+
     Map<String, LiveData<List<Comment>>> getPostsLatestComments() {
         Map<String, LiveData<List<Comment>>> postsLatestComments = new HashMap<>();
         List<Post> allPosts = this.posts.getValue();
@@ -27,12 +31,12 @@ public class PostsListFragmentViewModel extends ViewModel {
             return postsLatestComments;
         }
         for (Post post : allPosts) {
-            postsLatestComments.put(post.id, CommentsModel.instance().getCommentsByPostIdLimited(post.id));
+            postsLatestComments.put(post.id, CommentsModel.instance().getCommentsByPostId(post.id));
         }
         return postsLatestComments;
     }
 
     LiveData<List<Comment>> getPostLatestComments(String postId) {
-        return CommentsModel.instance().getCommentsByPostIdLimited(postId);
+        return CommentsModel.instance().getCommentsByPostId(postId);
     }
 }
