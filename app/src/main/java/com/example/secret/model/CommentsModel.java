@@ -23,6 +23,7 @@ public class CommentsModel {
     final public MutableLiveData<CommentsModel.LoadingState> eventCommentsListLoadingState = new MutableLiveData<>(CommentsModel.LoadingState.NOT_LOADING);
     private LiveData<List<Comment>> commentsList;
     private Map<String, LiveData<List<Comment>>> postsLatestComments = new HashMap<>();
+    private Map<String, LiveData<List<Comment>>> postsComments = new HashMap<>();
 
     private CommentsModel() {
 
@@ -55,6 +56,14 @@ public class CommentsModel {
             refreshLatestComments();
         }
         return commentsList;
+    }
+
+    public LiveData<List<Comment>> getCommentsByPostId(String postId) {
+        if (!this.postsComments.containsKey(postId)) {
+            this.postsComments.put(postId, localDb.commentDao().getCommentsByPostId(postId));
+            refreshLatestComments();
+        }
+        return this.postsComments.get(postId);
     }
 
     public LiveData<List<Comment>> getCommentsByPostIdLimited(String postId) {
