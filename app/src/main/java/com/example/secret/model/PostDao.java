@@ -17,6 +17,9 @@ public interface PostDao {
     @Query("select * from Post where lastUpdated BETWEEN strftime('%s','now', :daysBack) AND strftime('%s','now') order by lastUpdated desc limit :limit")
     LiveData<List<Post>> getAllLimited(String daysBack, int limit);
 
+    @Query("select * from Post where userId = :userId and lastUpdated BETWEEN strftime('%s','now', :daysBack) AND strftime('%s','now') order by lastUpdated desc limit :limit")
+    LiveData<List<Post>> getUserPostsLimited(String userId, String daysBack, int limit);
+
     @Query("select * from Post where id = :postId")
     Post getPostById(String postId);
 
