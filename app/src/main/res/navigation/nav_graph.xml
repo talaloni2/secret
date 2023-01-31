@@ -43,11 +43,6 @@
             app:destination="@id/signInFragment" />
     </fragment>
     <fragment
-        android:id="@+id/userProfileFragment"
-        android:name="com.example.secret.UserProfileFragment"
-        android:label="User Profile"
-        tools:layout="@layout/fragment_user_profile" />
-    <fragment
         android:id="@+id/createPostFragment"
         android:name="com.example.secret.CreatePostFragment"
         android:label="Share a Secret"
