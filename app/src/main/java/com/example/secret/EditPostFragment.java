@@ -114,7 +114,7 @@ public class EditPostFragment extends Fragment {
     private void onRetrievePostFailed() {
         Toast.makeText(getActivity(), "Cannot get post.", Toast.LENGTH_SHORT).show();
         makeProgressBarInvisible();
-        Navigation.findNavController(binding.getRoot()).navigate(EditPostFragmentDirections.actionEditPostFragmentToUserSettingsFragment());
+        Navigation.findNavController(binding.getRoot()).popBackStack();
     }
 
     private void makeProgressBarInvisible() {

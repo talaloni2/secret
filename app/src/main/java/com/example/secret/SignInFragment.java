@@ -66,7 +66,7 @@ public class SignInFragment extends Fragment {
         String email = binding.emailEt.getText().toString();
         String password = binding.passwordEt.getText().toString();
 
-        NavDirections navToAuthenticated = SignInFragmentDirections.actionSignInFragmentToUserSettingsFragment();
+        NavDirections navToAuthenticated = SignInFragmentDirections.actionSignInFragmentToPostsListFragment();
         Listener<Void> signInSuccess = unused -> {
             reloadUser(view, navToAuthenticated);
         };

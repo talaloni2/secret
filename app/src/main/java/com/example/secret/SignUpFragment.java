@@ -137,6 +137,7 @@ public class SignUpFragment extends Fragment {
 
         Listener<Void> createUserFailListener = unused -> {
             binding.registerProgressBar.setVisibility(View.INVISIBLE);
+            setButtonsClickable(true);
             Toast.makeText(getActivity(), "Register failed", Toast.LENGTH_SHORT).show();
         };
 
@@ -186,6 +187,6 @@ public class SignUpFragment extends Fragment {
     }
 
     private void navigateToFeed(View view) {
-        Navigation.findNavController(view).navigate(SignUpFragmentDirections.actionSignUpFragmentToUserSettingsFragment());
+        Navigation.findNavController(view).navigate(SignUpFragmentDirections.actionSignUpFragmentToPostsListFragment());
     }
 }

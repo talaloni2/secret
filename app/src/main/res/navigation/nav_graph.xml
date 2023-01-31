@@ -11,8 +11,8 @@
         android:label="Sign Up"
         tools:layout="@layout/fragment_sign_up">
         <action
-            android:id="@+id/action_signUpFragment_to_userSettingsFragment"
-            app:destination="@id/userSettingsFragment" />
+            android:id="@+id/action_signUpFragment_to_postsListFragment"
+            app:destination="@id/postsListFragment" />
     </fragment>
     <fragment
         android:id="@+id/signInFragment"
@@ -22,8 +22,8 @@
             android:id="@+id/action_signInFragment_to_signUpFragment"
             app:destination="@id/signUpFragment" />
         <action
-            android:id="@+id/action_signInFragment_to_userSettingsFragment"
-            app:destination="@id/userSettingsFragment" />
+            android:id="@+id/action_signInFragment_to_postsListFragment"
+            app:destination="@id/postsListFragment" />
     </fragment>
     <fragment
         android:id="@+id/userSettingsFragment"
@@ -46,22 +46,12 @@
         android:id="@+id/createPostFragment"
         android:name="com.example.secret.CreatePostFragment"
         android:label="Share a Secret"
-        tools:layout="@layout/fragment_create_post" >
-        <action
-            android:id="@+id/action_createPostFragment_to_userSettingsFragment"
-            app:destination="@id/userSettingsFragment"/>
-        <action
-            android:id="@+id/action_createPostFragment_to_editPostFragment"
-            app:destination="@id/editPostFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_create_post" />
     <fragment
         android:id="@+id/editPostFragment"
         android:name="com.example.secret.EditPostFragment"
         android:label="Edit a Secret"
         tools:layout="@layout/fragment_edit_post" >
-        <action
-            android:id="@+id/action_editPostFragment_to_userSettingsFragment"
-            app:destination="@id/userSettingsFragment" />
         <argument
             android:name="postId"
             app:argType="string" />
