@@ -69,7 +69,7 @@
     <fragment
         android:id="@+id/userPostsListFragment"
         android:name="com.example.secret.UserPostsListFragment"
-        android:label="Feed"
+        android:label="My Space"
         tools:layout="@layout/fragment_user_posts_list">
         <action
             android:id="@+id/action_userPostsListFragment_to_singlePostFragment"
