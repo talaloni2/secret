@@ -84,7 +84,10 @@ public class SinglePostFragment extends Fragment {
                     currentUser.id,
                     postId
             );
-            adapter.addComment(comment, unused -> SinglePostFragment.this.reloadData(), fail -> Toast.makeText(getActivity(), "Can't add comment", Toast.LENGTH_SHORT));
+            adapter.addComment(comment, unused -> {
+                binding.singlePostCommentEt.setText("");
+                SinglePostFragment.this.reloadData();
+            }, fail -> Toast.makeText(getActivity(), "Can't add comment", Toast.LENGTH_SHORT));
         });
 
         viewModel.getPostComments(postId).observe(getViewLifecycleOwner(), commentsList ->
