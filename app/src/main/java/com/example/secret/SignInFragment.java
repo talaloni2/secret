@@ -17,7 +17,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
-import androidx.room.util.StringUtil;
 
 import com.example.secret.databinding.FragmentSignInBinding;
 import com.example.secret.interfaces.Listener;
@@ -69,8 +68,7 @@ public class SignInFragment extends Fragment {
 
         NavDirections navToAuthenticated = SignInFragmentDirections.actionSignInFragmentToUserSettingsFragment();
         Listener<Void> signInSuccess = unused -> {
-            setUser(view, navToAuthenticated);
-            ;
+            reloadUser(view, navToAuthenticated);
         };
         Listener<Void> signInFailed = unused -> {
             binding.signInProgressBar.setVisibility(View.INVISIBLE);
@@ -85,8 +83,8 @@ public class SignInFragment extends Fragment {
         UsersModel.instance().signIn(email, password, signInSuccess, signInFailed);
     }
 
-    private void setUser(View view, NavDirections navToAuthenticated) {
-        UsersViewModel.instance().setUser(
+    private void reloadUser(View view, NavDirections navToAuthenticated) {
+        UsersViewModel.instance().reloadUser(
                 success -> {
                     binding.signInProgressBar.setVisibility(View.INVISIBLE);
                     Navigation.findNavController(view).navigate(navToAuthenticated);

@@ -1,14 +1,8 @@
 package com.example.secret.viewmodel;
 
-import android.graphics.Bitmap;
-
 import com.example.secret.interfaces.Listener;
-import com.example.secret.model.FirebaseModel;
 import com.example.secret.model.User;
 import com.example.secret.model.UsersModel;
-import com.squareup.picasso.Picasso;
-
-import java.util.List;
 
 public class UsersViewModel {
 
@@ -28,7 +22,15 @@ public class UsersViewModel {
     }
 
     public void setUser(Listener<Void> onSetUserSuccess, Listener<Void> onSetUserFailed){
-        UsersModel.instance().getCurrentUser(user -> {
+        executeSetUser(false, onSetUserSuccess, onSetUserFailed);
+    }
+
+    public void reloadUser(Listener<Void> onSetUserSuccess, Listener<Void> onSetUserFailed){
+        executeSetUser(true, onSetUserSuccess, onSetUserFailed);
+    }
+
+    private void executeSetUser(boolean forceRefresh, Listener<Void> onSetUserSuccess, Listener<Void> onSetUserFailed){
+        UsersModel.instance().getCurrentUser(forceRefresh, user -> {
             currentUser = user;
             onSetUserSuccess.onComplete(null);
         }, onSetUserFailed);

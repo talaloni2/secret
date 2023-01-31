@@ -41,16 +41,14 @@
         android:layout_height="wrap_content"
         android:src="@drawable/baseline_photo_random_24"
         app:layout_constraintBottom_toBottomOf="@+id/cameraButton"
-        app:layout_constraintEnd_toStartOf="@+id/galleryButton"
-        android:backgroundTint="@android:color/holo_blue_light"/>
+        app:layout_constraintEnd_toStartOf="@+id/galleryButton"/>
     <ImageButton
         android:id="@+id/galleryButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_baseline_image_search_24"
         app:layout_constraintBottom_toBottomOf="@+id/cameraButton"
-        app:layout_constraintEnd_toStartOf="@+id/cameraButton"
-        android:backgroundTint="@android:color/holo_blue_light"/>
+        app:layout_constraintEnd_toStartOf="@+id/cameraButton"/>
 
     <ImageButton
         android:id="@+id/cameraButton"
@@ -59,7 +57,6 @@
         app:layout_constraintTop_toBottomOf="@+id/postContentLayout"
         app:layout_constraintEnd_toEndOf="@+id/postContentLayout"
         android:src="@drawable/ic_baseline_photo_camera_24"
-        android:backgroundTint="@android:color/holo_blue_light"
         />
     <CheckBox
         android:id="@+id/anonymousCbx"
@@ -78,8 +75,7 @@
         android:text="Update"
         app:layout_constraintTop_toBottomOf="@+id/cameraButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:backgroundTint="@android:color/holo_blue_light"/>
+        app:layout_constraintEnd_toEndOf="parent"/>
     <ProgressBar
         android:id="@+id/publishPostProgressBar"
         android:layout_width="70dp"

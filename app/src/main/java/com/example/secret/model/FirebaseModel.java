@@ -101,6 +101,9 @@ public class FirebaseModel {
     public boolean isUserConnected() {
         return auth.getCurrentUser() != null;
     }
+    public String getCurrentUserId() {
+        return auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
+    }
 
     public void getCurrentUser(Listener<User> onCurrentUserReceived, Listener<Void> onCurrentUserNotReceived) {
         FirebaseUser firebaseUser = auth.getCurrentUser();

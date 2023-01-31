@@ -3,7 +3,6 @@ package com.example.secret;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,7 +13,6 @@ import com.example.secret.model.Comment;
 import com.example.secret.model.Post;
 import com.squareup.picasso.Picasso;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
