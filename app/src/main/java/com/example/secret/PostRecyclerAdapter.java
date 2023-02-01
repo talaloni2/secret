@@ -15,6 +15,7 @@ import com.example.secret.model.Post;
 import com.squareup.picasso.Picasso;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -103,10 +104,10 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostViewHolder> {
         notifyDataSetChanged();
     }
 
-    public PostRecyclerAdapter(LayoutInflater inflater, List<Post> posts, Map<String, List<Comment>> postsLatestComments) {
+    public PostRecyclerAdapter(LayoutInflater inflater, List<Post> posts) {
         this.inflater = inflater;
         this.posts = posts;
-        this.postsLatestComments = postsLatestComments;
+        this.postsLatestComments = new HashMap<>();
     }
 
     void setOnItemClickListener(OnItemClickListener listener) {

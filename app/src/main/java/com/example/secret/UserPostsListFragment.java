@@ -1,5 +1,7 @@
 package com.example.secret;
 
+import static com.example.secret.PostsListViewUtils.onPostClicked;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -47,52 +49,35 @@ public class UserPostsListFragment extends Fragment {
         currentUser = UsersViewModel.instance().getCurrentUser();
         View view = binding.getRoot();
 
+        initPostsList(view);
+        binding.userPostsListBtnLoadMore.setOnClickListener(v -> {
+            PostsModel.instance().loadMoreUserPosts(currentUser.id).observe(getViewLifecycleOwner(), this::onPostsListChanged);
+        });
+
+        viewModel.getUserPosts(currentUser.id).observe(getViewLifecycleOwner(), this::onPostsListChanged);
+        return view;
+    }
+
+    private void initPostsList(View view) {
         binding.userPostsListRecyclerView.setHasFixedSize(true);
         binding.userPostsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        Map<String, List<Comment>> postsLatestCommentsData = new HashMap<>();
-        for (Map.Entry<String, LiveData<List<Comment>>> entry : viewModel.getPostsLatestComments().entrySet()) {
-            postsLatestCommentsData.put(entry.getKey(), entry.getValue().getValue());
-        }
-        adapter = new PostRecyclerAdapter(getLayoutInflater(), viewModel.getUserPosts(currentUser.id).getValue(), postsLatestCommentsData);
+        adapter = new PostRecyclerAdapter(getLayoutInflater(), viewModel.getPosts().getValue());
         binding.userPostsListRecyclerView.setAdapter(adapter);
+        adapter.setOnItemClickListener(pos -> onPostClicked(adapter, view, pos));
 
-        adapter.setOnItemClickListener(pos -> {
-            Log.d("TAG", "Row was clicked " + pos);
-            Post post = adapter.getPosts().get(pos);
-            UserPostsListFragmentDirections.ActionUserPostsListFragmentToSinglePostFragment action =
-                    UserPostsListFragmentDirections.actionUserPostsListFragmentToSinglePostFragment(
-                            post.id
-                    );
-            Navigation.findNavController(view).navigate(action);
-        });
-
-        binding.userPostsListBtnLoadMore.setOnClickListener(v -> {
-            PostsModel.instance().loadMoreUserPosts(currentUser.id).observe(getViewLifecycleOwner(), postsList -> {
-                adapter.setPosts(postsList);
-                CommentsModel.instance().refreshLatestComments();
-                for (Post post : postsList) {
-                    viewModel.getPostLatestComments(post.id).observe(getViewLifecycleOwner(),
-                            commentList -> adapter.setPostLatestComments(post.id, commentList));
-                }
-            });
-        });
-
-        viewModel.getUserPosts(currentUser.id).observe(getViewLifecycleOwner(), postsList -> {
-            adapter.setPosts(postsList);
-            for (Post post : postsList) {
-                viewModel.getPostLatestComments(post.id).observe(getViewLifecycleOwner(),
-                        commentList -> adapter.setPostLatestComments(post.id, commentList));
-            }
-        });
+        viewModel.getPosts().observe(getViewLifecycleOwner(), this::onPostsListChanged);
 
         PostsModel.instance().EventPostsListLoadingState.observe(getViewLifecycleOwner(), status ->
                 binding.userPostsListSwipeRefresh.setRefreshing(status == PostsModel.LoadingState.LOADING));
+        binding.userPostsListSwipeRefresh.setOnRefreshListener(PostsListViewUtils::reloadData);
+    }
 
-        CommentsModel.instance().eventCommentsListLoadingState.observe(getViewLifecycleOwner(), status ->
-                binding.userPostsListSwipeRefresh.setRefreshing(status == CommentsModel.LoadingState.LOADING));
-
-        binding.userPostsListSwipeRefresh.setOnRefreshListener(this::reloadData);
-        return view;
+    private void onPostsListChanged(List<Post> postsList) {
+        adapter.setPosts(postsList);
+        for (Post post : postsList) {
+            viewModel.getPostLatestComments(post.id).observe(getViewLifecycleOwner(),
+                    commentList -> adapter.setPostLatestComments(post.id, commentList));
+        }
     }
 
     @Override
