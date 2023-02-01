@@ -67,7 +67,6 @@ public class UserPostsListFragment extends Fragment {
         });
 
         binding.userPostsListBtnLoadMore.setOnClickListener(v -> {
-            binding.userPostsListProgressBar.setVisibility(View.VISIBLE);
             PostsModel.instance().loadMoreUserPosts(currentUser.id).observe(getViewLifecycleOwner(), postsList -> {
                 adapter.setPosts(postsList);
                 CommentsModel.instance().refreshLatestComments();
@@ -75,11 +74,8 @@ public class UserPostsListFragment extends Fragment {
                     viewModel.getPostLatestComments(post.id).observe(getViewLifecycleOwner(),
                             commentList -> adapter.setPostLatestComments(post.id, commentList));
                 }
-                binding.userPostsListProgressBar.setVisibility(View.INVISIBLE);
             });
         });
-
-        binding.userPostsListProgressBar.setVisibility(View.GONE);
 
         viewModel.getUserPosts(currentUser.id).observe(getViewLifecycleOwner(), postsList -> {
             adapter.setPosts(postsList);
