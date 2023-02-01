@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/list_item_content_tv"
-        app:srcCompat="@drawable/avatar"/>
+        app:srcCompat="@drawable/sharing_secret_image"/>
 
     <TextView
         android:id="@+id/list_item_content_tv"
