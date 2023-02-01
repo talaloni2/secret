@@ -102,7 +102,6 @@ public class EditPostFragment extends Fragment {
         }
         PostsViewModel.instance().getPost(postId,
                 post -> {
-                    binding.anonymousCbx.setChecked(post.getAnonymous());
                     binding.postContentEt.setText(post.getContent());
                     Picasso.get().load(post.getBackgroundUrl()).placeholder(R.drawable.sharing_secret_image).into(binding.postImage);
                     makeProgressBarInvisible();
@@ -130,7 +129,7 @@ public class EditPostFragment extends Fragment {
         String postContent = binding.postContentEt.getText().toString();
         Post currentlyEditedPost = PostsViewModel.instance().getCurrentPost();
         currentlyEditedPost.setContent(postContent);
-        currentlyEditedPost.setAnonymous(binding.anonymousCbx.isChecked());
+        currentlyEditedPost.setAnonymous(true);
         Bitmap newImage = null;
         if (isBackgroundSelected) {
             newImage = ((BitmapDrawable) binding.postImage.getDrawable()).getBitmap();

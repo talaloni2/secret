@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,8 @@ class PostViewHolder extends RecyclerView.ViewHolder {
     TextView contentTv;
     TextView comment1Tv;
     TextView comment2Tv;
+    LinearLayout comment1Layout;
+    LinearLayout comment2Layout;
 
     public PostViewHolder(@NonNull View itemView, PostRecyclerAdapter.OnItemClickListener listener, List<Post> posts, Map<String, List<Comment>> postsLatestComments) {
         super(itemView);
@@ -32,6 +35,8 @@ class PostViewHolder extends RecyclerView.ViewHolder {
         this.postsLatestComments = postsLatestComments;
         backgroundImage = itemView.findViewById(R.id.list_item_background_img);
         contentTv = itemView.findViewById(R.id.list_item_content_tv);
+        comment1Layout = itemView.findViewById(R.id.list_item_comment_layout_1);
+        comment2Layout = itemView.findViewById(R.id.list_item_comment_layout_2);
         comment1Tv = itemView.findViewById(R.id.list_item_comment1);
         comment2Tv = itemView.findViewById(R.id.list_item_comment2);
         itemView.setOnClickListener(view -> {
@@ -43,13 +48,28 @@ class PostViewHolder extends RecyclerView.ViewHolder {
     public void bind(Post post, int pos) {
         List<Comment> latestComments = this.postsLatestComments.getOrDefault(post.id, Collections.emptyList());
         contentTv.setText(post.content);
-        comment1Tv.setText(latestComments.size() > 0 ? latestComments.get(0).content : "");
-        comment2Tv.setText(latestComments.size() > 1 ? latestComments.get(1).content : "");
+        setLatestComments(latestComments);
         if (post.getBackgroundUrl() != null && post.getBackgroundUrl().length() > 5) {
             Picasso.get().load(post.getBackgroundUrl()).placeholder(R.drawable.sharing_secret_image).into(backgroundImage);
         } else {
             backgroundImage.setImageResource(R.drawable.sharing_secret_image);
         }
+    }
+
+    private void setLatestComments(List<Comment> latestComments) {
+        if (latestComments == null) return;
+
+        setCommentViewOnSize(latestComments, 0, comment1Tv, comment1Layout);
+        setCommentViewOnSize(latestComments, 1, comment2Tv, comment2Layout);
+    }
+
+    private void setCommentViewOnSize(List<Comment> latestComments, int idx, TextView comment1Tv, LinearLayout comment1Layout) {
+        if (latestComments.size() > idx) {
+            comment1Tv.setText(latestComments.get(idx).getContent());
+            comment1Layout.setVisibility(View.VISIBLE);
+            return;
+        }
+        comment1Layout.setVisibility(View.GONE);
     }
 }
 

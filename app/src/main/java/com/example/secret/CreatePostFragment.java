@@ -92,7 +92,7 @@ public class CreatePostFragment extends Fragment {
     private void onPublishClick(View view) {
         makeProgressBarVisible();
         String postContent = binding.postContentEt.getText().toString();
-        boolean isAnonymous = binding.anonymousCbx.isChecked();
+        boolean isAnonymous = true;
         Bitmap image = null;
         if(isBackgroundSelected){
             image = ((BitmapDrawable) binding.postImage.getDrawable()).getBitmap();

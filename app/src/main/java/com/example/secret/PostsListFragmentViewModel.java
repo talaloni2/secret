@@ -14,10 +14,10 @@ import java.util.Map;
 import java.util.Objects;
 
 public class PostsListFragmentViewModel extends ViewModel {
-    private LiveData<List<Post>> posts = PostsModel.instance().getAllPosts();
+//    private LiveData<List<Post>> posts = PostsModel.instance().getAllPosts();
 
     LiveData<List<Post>> getPosts() {
-        return posts;
+        return PostsModel.instance().getAllPosts();
     }
 
     LiveData<List<Post>> getUserPosts(String userId) {
@@ -26,7 +26,7 @@ public class PostsListFragmentViewModel extends ViewModel {
 
     Map<String, LiveData<List<Comment>>> getPostsLatestComments() {
         Map<String, LiveData<List<Comment>>> postsLatestComments = new HashMap<>();
-        List<Post> allPosts = this.posts.getValue();
+        List<Post> allPosts = this.getPosts().getValue();
         if (allPosts == null) {
             return postsLatestComments;
         }
