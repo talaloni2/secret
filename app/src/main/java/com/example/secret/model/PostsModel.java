@@ -135,11 +135,6 @@ public class PostsModel {
                     time = st.getLastUpdated();
                 }
             }
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             // update local last update
             Post.setLocalLastUpdate(time);
             EventPostsListLoadingState.postValue(LoadingState.NOT_LOADING);
