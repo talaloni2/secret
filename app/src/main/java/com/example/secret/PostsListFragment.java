@@ -51,7 +51,7 @@ public class PostsListFragment extends Fragment {
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new PostRecyclerAdapter(getLayoutInflater(), viewModel.getPosts().getValue());
         binding.recyclerView.setAdapter(adapter);
-        adapter.setOnItemClickListener(pos -> onPostClicked(adapter, view, pos));
+        adapter.setOnItemClickListener(pos -> this.onPostClicked(view, pos));
 
         viewModel.getPosts().observe(getViewLifecycleOwner(), this::onPostsListChanged);
 
@@ -66,6 +66,16 @@ public class PostsListFragment extends Fragment {
             viewModel.getPostLatestComments(post.id).observe(getViewLifecycleOwner(),
                     commentList -> adapter.setPostLatestComments(post.id, commentList));
         }
+    }
+
+    private void onPostClicked(View view, int pos) {
+        Log.d("TAG", "Row was clicked " + pos);
+        Post post = adapter.getPosts().get(pos);
+        PostsListFragmentDirections.ActionPostsListFragmentToSinglePostFragment action =
+                PostsListFragmentDirections.actionPostsListFragmentToSinglePostFragment(
+                        post.id
+                );
+        Navigation.findNavController(view).navigate(action);
     }
 
     @Override
