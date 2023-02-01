@@ -168,7 +168,7 @@ public class FirebaseModel {
 
     public void getAllCommentsSince(Long since, Listener<List<Comment>> callback) {
         db.collection(Comment.COLLECTION)
-                .whereGreaterThanOrEqualTo(Comment.LAST_UPDATED, new Timestamp(since, 0))
+                .whereGreaterThanOrEqualTo(Comment.LAST_UPDATED, new Timestamp(since + 1, 0))
                 .get()
                 .addOnCompleteListener(task -> {
                     List<Comment> comments = new LinkedList<>();
@@ -209,7 +209,7 @@ public class FirebaseModel {
 
     public void getAllPostsSince(Long since, Listener<List<Post>> callback) {
         db.collection(Post.COLLECTION)
-                .whereGreaterThanOrEqualTo(Post.LAST_UPDATED, new Timestamp(since, 0))
+                .whereGreaterThanOrEqualTo(Post.LAST_UPDATED, new Timestamp(since + 1, 0))
                 .get()
                 .addOnCompleteListener(task -> {
                     List<Post> list = new LinkedList<>();
