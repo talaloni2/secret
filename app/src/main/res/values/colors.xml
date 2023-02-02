@@ -6,11 +6,6 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_500">#179A8D</color>
     <color name="teal_700">#FF018786</color>
-    <color name="aqua">#04D3D1</color>
-    <color name="aqua_top">#01A3A1</color>
-    <color name="fire">#FF8400</color>
-    <color name="yellow">#FFD500</color>
-    <color name="red">#FF3C00</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="palette_primary">#108FB8</color>
