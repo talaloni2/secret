@@ -40,16 +40,14 @@ public class PostsListFragment extends Fragment {
         View view = binding.getRoot();
 
         initPostsList(view);
-        binding.btnLoadMore.setOnClickListener(v -> {
-            PostsModel.instance().loadMorePosts().observe(getViewLifecycleOwner(), this::onPostsListChanged);
-        });
         return view;
     }
 
     private void initPostsList(View view) {
         binding.recyclerView.setHasFixedSize(true);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new PostRecyclerAdapter(getLayoutInflater(), viewModel.getPosts().getValue());
+        adapter = new PostRecyclerAdapter(getLayoutInflater(), viewModel.getPosts().getValue(),
+                v -> PostsModel.instance().loadMorePosts().observe(getViewLifecycleOwner(), this::onPostsListChanged));
         binding.recyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener(pos -> this.onPostClicked(view, pos));
 

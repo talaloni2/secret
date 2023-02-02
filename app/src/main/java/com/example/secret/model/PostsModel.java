@@ -53,6 +53,11 @@ public class PostsModel {
     public void uploadPost(Post post, Listener<Void> successListener, Listener<Void> failListener) {
         Listener<Void> modelSuccessListener = success -> {
             executor.execute(() -> {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 MyApplication.mainThreadHandler.post(()->{
                     refreshLatestPosts();
                     successListener.onComplete(null);

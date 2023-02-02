@@ -50,9 +50,7 @@ public class UserPostsListFragment extends Fragment {
         View view = binding.getRoot();
 
         initPostsList(view);
-        binding.userPostsListBtnLoadMore.setOnClickListener(v -> {
-            PostsModel.instance().loadMoreUserPosts(currentUser.id).observe(getViewLifecycleOwner(), this::onPostsListChanged);
-        });
+//        binding.userPostsListBtnLoadMore.setOnClickListener(v -> PostsModel.instance().loadMoreUserPosts(currentUser.id).observe(getViewLifecycleOwner(), this::onPostsListChanged));
 
         viewModel.getUserPosts(currentUser.id).observe(getViewLifecycleOwner(), this::onPostsListChanged);
         return view;
@@ -61,7 +59,8 @@ public class UserPostsListFragment extends Fragment {
     private void initPostsList(View view) {
         binding.userPostsListRecyclerView.setHasFixedSize(true);
         binding.userPostsListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new PostRecyclerAdapter(getLayoutInflater(), viewModel.getPosts().getValue());
+        adapter = new PostRecyclerAdapter(getLayoutInflater(), viewModel.getPosts().getValue(),
+                v -> PostsModel.instance().loadMoreUserPosts(currentUser.id).observe(getViewLifecycleOwner(), this::onPostsListChanged));
         binding.userPostsListRecyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener(pos -> this.onPostClicked(view, pos));
 
