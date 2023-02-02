@@ -118,7 +118,7 @@ public class UserSettingsFragment extends Fragment {
     }
 
     private void makeProgressBarInVisible() {
-        binding.updateProfileProgressBar.setVisibility(View.INVISIBLE);
+        binding.updateProfileProgressBar.setVisibility(View.GONE);
     }
 
     private void onUpdateProfileUserValidated(Void unused) {

@@ -26,7 +26,7 @@ public class InitFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         FragmentInitBinding binding = FragmentInitBinding.inflate(inflater, container, false);
-        getActivity().findViewById(R.id.main_bottomNavigationView).setVisibility(View.INVISIBLE);
+        getActivity().findViewById(R.id.main_bottomNavigationView).setVisibility(View.GONE);
 
         return binding.getRoot();
     }

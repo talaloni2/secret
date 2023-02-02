@@ -33,10 +33,10 @@ public class RandomBackgroundClickedListener implements View.OnClickListener {
                 backgroundMeta -> {
                     Picasso.get().load(backgroundMeta.getUrls().getThumb()).placeholder(R.drawable.sharing_secret_image).into(targetView);
                     imageSelectedSetter.accept(true);
-                    progressBar.setVisibility(View.INVISIBLE);
+                    progressBar.setVisibility(View.GONE);
                 },
                 fail -> {
-                    progressBar.setVisibility(View.INVISIBLE);
+                    progressBar.setVisibility(View.GONE);
                     Toast.makeText(activity, "Try again later", Toast.LENGTH_SHORT).show();
                 }
         );

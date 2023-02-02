@@ -31,7 +31,7 @@ public class SignInFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().findViewById(R.id.main_bottomNavigationView).setVisibility(View.INVISIBLE);
+        getActivity().findViewById(R.id.main_bottomNavigationView).setVisibility(View.GONE);
         FragmentActivity parentActivity = getActivity();
         parentActivity.addMenuProvider(new MenuProvider() {
             @Override
@@ -51,7 +51,7 @@ public class SignInFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentSignInBinding.inflate(inflater, container, false);
-        binding.signInProgressBar.setVisibility(View.INVISIBLE);
+        binding.signInProgressBar.setVisibility(View.GONE);
 
         NavDirections navToSignUp = SignInFragmentDirections.actionSignInFragmentToSignUpFragment();
         binding.registerBtn.setOnClickListener(Navigation.createNavigateOnClickListener(navToSignUp));
@@ -71,7 +71,7 @@ public class SignInFragment extends Fragment {
             reloadUser(view, navToAuthenticated);
         };
         Listener<Void> signInFailed = unused -> {
-            binding.signInProgressBar.setVisibility(View.INVISIBLE);
+            binding.signInProgressBar.setVisibility(View.GONE);
             Toast.makeText(getActivity(), "Email or password are incorrect", Toast.LENGTH_SHORT).show();
         };
 
@@ -86,11 +86,11 @@ public class SignInFragment extends Fragment {
     private void reloadUser(View view, NavDirections navToAuthenticated) {
         UsersViewModel.instance().reloadUser(
                 success -> {
-                    binding.signInProgressBar.setVisibility(View.INVISIBLE);
+                    binding.signInProgressBar.setVisibility(View.GONE);
                     Navigation.findNavController(view).navigate(navToAuthenticated);
                 },
                 fail -> {
-                    binding.signInProgressBar.setVisibility(View.INVISIBLE);
+                    binding.signInProgressBar.setVisibility(View.GONE);
                     Toast.makeText(getActivity(), "Could not get user data. authentication was successful", Toast.LENGTH_SHORT).show();
                 });
     }

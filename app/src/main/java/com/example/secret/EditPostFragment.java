@@ -117,7 +117,7 @@ public class EditPostFragment extends Fragment {
     }
 
     private void makeProgressBarInvisible() {
-        binding.publishPostProgressBar.setVisibility(View.INVISIBLE);
+        binding.publishPostProgressBar.setVisibility(View.GONE);
     }
 
     private void makeProgressBarVisible() {

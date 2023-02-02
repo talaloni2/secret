@@ -44,7 +44,7 @@ public class SignUpFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActivity().findViewById(R.id.main_bottomNavigationView).setVisibility(View.INVISIBLE);
+        getActivity().findViewById(R.id.main_bottomNavigationView).setVisibility(View.GONE);
 
         FragmentActivity parentActivity = getActivity();
         parentActivity.addMenuProvider(new MenuProvider() {
@@ -78,7 +78,7 @@ public class SignUpFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentSignUpBinding.inflate(inflater, container, false);
-        binding.registerProgressBar.setVisibility(View.INVISIBLE);
+        binding.registerProgressBar.setVisibility(View.GONE);
 
         binding.registerBtn.setOnClickListener(this::performRegister);
 
@@ -108,7 +108,7 @@ public class SignUpFragment extends Fragment {
                 validationError -> {
                     Toast.makeText(getActivity(), validationError, Toast.LENGTH_SHORT).show();
                     setButtonsClickable(true);
-                    binding.registerProgressBar.setVisibility(View.INVISIBLE);
+                    binding.registerProgressBar.setVisibility(View.GONE);
                 }
         );
     }
@@ -122,13 +122,13 @@ public class SignUpFragment extends Fragment {
         Listener<Void> createUserSuccessListener = unused -> {
             UsersViewModel.instance().setUser(
                     success -> {
-                        binding.registerProgressBar.setVisibility(View.INVISIBLE);
+                        binding.registerProgressBar.setVisibility(View.GONE);
                         Toast.makeText(getActivity(), "Registered successfully", Toast.LENGTH_SHORT).show();
                         setButtonsClickable(true);
                         navigateToFeed(view);
                     },
                     fail -> {
-                        binding.registerProgressBar.setVisibility(View.INVISIBLE);
+                        binding.registerProgressBar.setVisibility(View.GONE);
                         Toast.makeText(getActivity(), "Sign in with your new credentials", Toast.LENGTH_SHORT).show();
                         setButtonsClickable(true);
                     }
@@ -136,7 +136,7 @@ public class SignUpFragment extends Fragment {
         };
 
         Listener<Void> createUserFailListener = unused -> {
-            binding.registerProgressBar.setVisibility(View.INVISIBLE);
+            binding.registerProgressBar.setVisibility(View.GONE);
             setButtonsClickable(true);
             Toast.makeText(getActivity(), "Register failed", Toast.LENGTH_SHORT).show();
         };
