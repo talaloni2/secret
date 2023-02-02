@@ -36,23 +36,6 @@ public class FirebaseModel {
         auth = FirebaseAuth.getInstance();
     }
 
-    public void getAllUsersSince(Long since, Listener<List<User>> callback) {
-        db.collection(User.COLLECTION)
-                .whereGreaterThanOrEqualTo(User.LAST_UPDATED, new Timestamp(since, 0))
-                .get()
-                .addOnCompleteListener(task -> {
-                    List<User> list = new LinkedList<>();
-                    if (task.isSuccessful()) {
-                        QuerySnapshot jsonsList = task.getResult();
-                        for (DocumentSnapshot json : jsonsList) {
-                            User user = User.fromJson(json.getData());
-                            list.add(user);
-                        }
-                    }
-                    callback.onComplete(list);
-                });
-    }
-
     public void register(User user, String password, Listener<Void> successListener,
                          Listener<Void> failListener) {
         String TAG = "REGISTER";
@@ -142,18 +125,6 @@ public class FirebaseModel {
         auth.signOut();
     }
 
-    public void getComment(String commentId, Listener<Map<String, Object>> successListener, Listener<Void> failedListener) {
-        db.collection(Comment.COLLECTION).document(commentId).get()
-                .addOnSuccessListener(t -> {
-                    if (t.exists()) {
-                        successListener.onComplete(t.getData());
-                        return;
-                    }
-                    failedListener.onComplete(null);
-                })
-                .addOnFailureListener(t -> failedListener.onComplete(null));
-    }
-
     public void setComment(Comment comment, Listener<Void> successListener, Listener<Void> failListener) {
         db.collection(Comment.COLLECTION).document(comment.getId()).set(comment.toJson())
                 .addOnCompleteListener(task -> {
@@ -169,6 +140,8 @@ public class FirebaseModel {
     public void getAllCommentsSince(Long since, Listener<List<Comment>> callback) {
         db.collection(Comment.COLLECTION)
                 .whereGreaterThanOrEqualTo(Comment.LAST_UPDATED, new Timestamp(since + 1, 0))
+                .orderBy(Comment.LAST_UPDATED)
+                .limit(10000)
                 .get()
                 .addOnCompleteListener(task -> {
                     List<Comment> comments = new LinkedList<>();
@@ -210,6 +183,8 @@ public class FirebaseModel {
     public void getAllPostsSince(Long since, Listener<List<Post>> callback) {
         db.collection(Post.COLLECTION)
                 .whereGreaterThanOrEqualTo(Post.LAST_UPDATED, new Timestamp(since + 1, 0))
+                .orderBy(Post.LAST_UPDATED)
+                .limit(1000)
                 .get()
                 .addOnCompleteListener(task -> {
                     List<Post> list = new LinkedList<>();
@@ -222,18 +197,6 @@ public class FirebaseModel {
                     }
                     callback.onComplete(list);
                 });
-    }
-
-    public void getRandomPost(String userId, Listener<Map<String, Object>> successListener, Listener<Void> failedListener) {
-        db.collection(Post.COLLECTION).whereEqualTo(Post.USER_ID, userId).get()
-                .addOnSuccessListener(t -> {
-                    if (t.isEmpty()) {
-                        failedListener.onComplete(null);
-                        return;
-                    }
-                    successListener.onComplete(t.getDocuments().get(0).getData());
-                })
-                .addOnFailureListener(t -> failedListener.onComplete(null));
     }
 
     public void checkForNicknameExistence(String nickname, String userId, Listener<Boolean> onCheckSuccess, Listener<Exception> onCheckFailed) {
