@@ -66,6 +66,7 @@ public class UsersModel {
     public void updateUser(User user, Listener<Void> successListener, Listener<Void> failedListener) {
         firebaseModel.setUser(user, successListener, failedListener);
         insertUserToLocalDb(user);
+        PostsModel.instance().updateCurrentUser(user);
     }
 
     private void insertUserToLocalDb(User user) {

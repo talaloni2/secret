@@ -145,4 +145,10 @@ public class PostsModel {
             EventPostsListLoadingState.postValue(LoadingState.NOT_LOADING);
         }));
     }
+
+    public void updateCurrentUser(User user){
+        this.currentUser = user;
+        loadMorePosts();
+        loadMoreUserPosts(user.getId());
+    }
 }
